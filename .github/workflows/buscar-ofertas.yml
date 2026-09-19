@@ -1,0 +1,33 @@
+name: Buscar achadinhos diariamente
+
+on:
+  schedule:
+    - cron: "0 11 * * *" # 08:00 America/Sao_Paulo (UTC-3)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  buscar-ofertas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Buscar ofertas do Mercado Livre
+        run: python buscar_ofertas.py
+
+      - name: Commit e push do CSV atualizado
+        run: |
+          git config user.name "Achadinhos Bot"
+          git config user.email "achadinhos@achadinhosdoterra.local"
+          git add achadinhos.csv
+          git diff --cached --quiet && echo "Sem mudancas" || git commit -m "Atualiza achadinhos - $(date +'%d/%m/%Y %H:%M')"
+          git push
