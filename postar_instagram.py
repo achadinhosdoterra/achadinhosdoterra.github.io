@@ -11,38 +11,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 ENV_PATH = Path(__file__).parent / ".env"
 CSV_PATH = Path(__file__).parent / "achadinhos.csv"
-HOJE_PATH = Path(__file__).parent / "docs" / "hoje" / "index.html"
 GRAPH_URL = "https://graph.instagram.com/v21.0"
-
-HOJE_TEMPLATE = """<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="refresh" content="0; url={link}">
-<title>Achadinhos do Terra</title>
-<style>
-  body {{
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #0f1115;
-    color: #f2f2f2;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    text-align: center;
-    padding: 24px;
-  }}
-  a {{ color: #ff6b35; font-weight: 600; }}
-</style>
-<script>window.location.replace("{link}");</script>
-</head>
-<body>
-  <p>Redirecionando para o achadinho de hoje...<br><a href="{link}">Clique aqui se não for redirecionado</a></p>
-</body>
-</html>
-"""
 
 
 def load_env():
@@ -84,12 +53,6 @@ def comentar_link(env, media_id, link_afiliado):
     print("Comentario postado:", resultado.get("id"))
 
 
-def gerar_pagina_hoje(link_afiliado):
-    HOJE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    HOJE_PATH.write_text(HOJE_TEMPLATE.format(link=link_afiliado), encoding="utf-8")
-    print(f"Pagina de redirecionamento atualizada em {HOJE_PATH} -> {link_afiliado}")
-
-
 def publicar_feed(env, produto, publicar=False, link_afiliado=None):
     caption = produto["legenda_sugerida"]
     imagem = produto["imagem"]
@@ -129,8 +92,6 @@ def publicar_feed(env, produto, publicar=False, link_afiliado=None):
 
     if link_afiliado:
         comentar_link(env, media_id, link_afiliado)
-        gerar_pagina_hoje(link_afiliado)
-        print("\nNao esqueca de dar commit/push em docs/hoje/index.html")
 
 
 if __name__ == "__main__":
