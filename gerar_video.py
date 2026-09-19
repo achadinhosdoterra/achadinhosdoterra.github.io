@@ -1,5 +1,6 @@
 import asyncio
 import csv
+import json
 import sys
 import urllib.request
 from pathlib import Path
@@ -15,12 +16,22 @@ OUTPUT_DIR = Path(__file__).parent / "videos"
 
 VOZ = "pt-BR-FranciscaNeural"
 W, H = 1080, 1920
+MAX_IMAGENS = 6
 
 
 def escolher_produto(index=0):
     with CSV_PATH.open(encoding="utf-8-sig") as f:
         produtos = list(csv.DictReader(f))
     return produtos[index]
+
+
+def carregar_galeria(index, imagem_padrao):
+    galeria_path = TEMP_DIR / f"galeria_{index}.json"
+    if galeria_path.exists():
+        urls = json.loads(galeria_path.read_text(encoding="utf-8"))
+        if urls:
+            return urls[:MAX_IMAGENS]
+    return [imagem_padrao]
 
 
 def baixar_imagem(url, destino):
@@ -34,11 +45,19 @@ async def gerar_audio(texto, destino):
     await comunicador.save(str(destino))
 
 
+def preco_falado(valor):
+    reais = int(valor)
+    centavos = round((valor - reais) * 100)
+    if centavos == 0:
+        return f"{reais} reais"
+    return f"{reais} reais e {centavos} centavos"
+
+
 def montar_texto_narracao(produto):
-    preco = f"{float(produto['preco_atual']):.2f}".replace(".", ",")
+    preco = preco_falado(float(produto["preco_atual"]))
     desconto = produto["desconto_pct"]
     return (
-        f"Olha esse preco! {produto['titulo']}, por apenas {preco} reais, "
+        f"Olha esse preco! {produto['titulo']}, por apenas {preco}, "
         f"com {desconto} por cento de desconto. "
         f"Comenta aqui embaixo que eu te mando o link!"
     )
@@ -48,12 +67,21 @@ def gerar_video(produto, index=0):
     TEMP_DIR.mkdir(exist_ok=True)
     OUTPUT_DIR.mkdir(exist_ok=True)
 
-    imagem_path = TEMP_DIR / f"imagem_{index}.jpg"
     audio_path = TEMP_DIR / f"audio_{index}.mp3"
     saida_path = OUTPUT_DIR / f"video_{index}.mp4"
 
-    print("Baixando imagem do produto...")
-    baixar_imagem(produto["imagem"], imagem_path)
+    urls_imagens = carregar_galeria(index, produto["imagem"])
+    print(f"Baixando {len(urls_imagens)} imagem(ns) do produto...")
+    caminhos_imagens = []
+    for i, url in enumerate(urls_imagens):
+        caminho = TEMP_DIR / f"imagem_{index}_{i}.jpg"
+        try:
+            baixar_imagem(url, caminho)
+            caminhos_imagens.append(caminho)
+        except Exception as e:
+            print(f"  aviso: falha ao baixar imagem {i}: {e}")
+    if not caminhos_imagens:
+        raise RuntimeError("Nenhuma imagem baixada com sucesso.")
 
     print("Gerando narracao...")
     texto = montar_texto_narracao(produto)
@@ -65,20 +93,31 @@ def gerar_video(produto, index=0):
 
     fundo = ColorClip(size=(W, H), color=(15, 17, 21)).with_duration(duracao)
 
-    escala_base = None
+    n = len(caminhos_imagens)
+    fatia = duracao / n
+    clipes_imagens = []
+    for i, caminho in enumerate(caminhos_imagens):
+        inicio = i * fatia
+        img_probe = ImageClip(str(caminho))
+        escala_base = min(W / img_probe.w, H / img_probe.h) * 0.85
 
-    def zoom(t):
-        return escala_base * (1 + 0.06 * (t / duracao))
+        def zoom(t, escala_base=escala_base, fatia=fatia):
+            return escala_base * (1 + 0.08 * (t / fatia))
 
-    img_probe = ImageClip(str(imagem_path))
-    escala_base = min(W / img_probe.w, H / img_probe.h) * 0.85
-    img_clip = ImageClip(str(imagem_path)).with_duration(duracao).resized(zoom).with_position("center")
+        clip = (
+            ImageClip(str(caminho))
+            .with_duration(fatia)
+            .resized(zoom)
+            .with_position("center")
+            .with_start(inicio)
+        )
+        clipes_imagens.append(clip)
 
-    preco = f"R$ {float(produto['preco_atual']):.2f}".replace(".", ",")
+    preco_txt = f"R$ {float(produto['preco_atual']):.2f}".replace(".", ",")
     desconto_txt = f"{produto['desconto_pct']}% OFF"
 
     texto_preco = (
-        TextClip(text=preco, font_size=90, color="#ff6b35", stroke_color="black", stroke_width=3)
+        TextClip(text=preco_txt, font_size=90, color="#ff6b35", stroke_color="black", stroke_width=3)
         .with_duration(duracao)
         .with_position(("center", int(H * 0.72)))
     )
@@ -102,7 +141,9 @@ def gerar_video(produto, index=0):
         .with_position(("center", int(H * 0.87)))
     )
 
-    video = CompositeVideoClip([fundo, img_clip, texto_preco, texto_desconto, texto_cta], size=(W, H))
+    video = CompositeVideoClip(
+        [fundo, *clipes_imagens, texto_preco, texto_desconto, texto_cta], size=(W, H)
+    )
     video = video.with_audio(audio)
 
     print("Renderizando video...")
