@@ -8,7 +8,7 @@ OUTPUT_PATH = OUTPUT_DIR / "index.html"
 
 CARD_TEMPLATE = """
 <a class="card" href="{link}" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="{imagem}" alt="{titulo}" loading="lazy"></div>
+  <div class="card-img"><img src="{imagem}" alt="{titulo}"></div>
   <div class="card-body">
     <p class="titulo">{titulo}</p>
     <div class="precos">
