@@ -62,14 +62,11 @@ def escolher_produto(index=0, caminho=CSV_PATH):
     return produtos[index]
 
 
-def comentar_link(env, media_id, link_afiliado):
-    mensagem = f"Link de compra: {link_afiliado}"
-    resultado = graph_post(
-        f"{media_id}/comments",
-        message=mensagem,
-        access_token=env["IG_ACCESS_TOKEN"],
-    )
-    print("Comentario postado:", resultado.get("id"))
+def _lista_imagens(produto):
+    imagens = produto.get("imagens") or produto.get("imagem")
+    if isinstance(imagens, str):
+        imagens = imagens.split("|")
+    return [i for i in imagens if i]
 
 
 def registrar_publicacao(tipo, produto, link_afiliado, post_id):
@@ -87,7 +84,7 @@ def registrar_publicacao(tipo, produto, link_afiliado, post_id):
                 "preco_anterior": produto.get("preco_anterior", ""),
                 "desconto_pct": produto.get("desconto_pct", ""),
                 "link": link_afiliado,
-                "imagem": produto["imagem"],
+                "imagem": _lista_imagens(produto)[0],
                 "post_id": post_id,
             }
         )
@@ -96,12 +93,12 @@ def registrar_publicacao(tipo, produto, link_afiliado, post_id):
 
 def publicar_feed(env, produto, publicar=False, link_afiliado=None):
     caption = produto["legenda_sugerida"]
-    imagem = produto["imagem"]
+    imagens = _lista_imagens(produto)
 
     print("=== PREVIA DO POST (FEED) ===")
     print(f"Produto: {produto['titulo']}")
     print(f"Preco: R$ {produto['preco_atual']} ({produto['desconto_pct']}% OFF)")
-    print(f"Imagem: {imagem}")
+    print(f"Imagens ({len(imagens)}):", imagens)
     print("Legenda:")
     print(caption)
     print("=======================")
@@ -110,13 +107,38 @@ def publicar_feed(env, produto, publicar=False, link_afiliado=None):
         print("\n(modo teste: nada foi publicado. Rode com --publicar para postar de verdade)")
         return
 
-    print("Criando container de midia...")
-    container = graph_post(
-        f"{env['IG_USER_ID']}/media",
-        image_url=imagem,
-        caption=caption,
-        access_token=env["IG_ACCESS_TOKEN"],
-    )
+    if len(imagens) > 1:
+        print("Criando itens do carrossel...")
+        children = []
+        for url in imagens:
+            item = graph_post(
+                f"{env['IG_USER_ID']}/media",
+                image_url=url,
+                is_carousel_item="true",
+                access_token=env["IG_ACCESS_TOKEN"],
+            )
+            children.append(item["id"])
+            print("Item criado:", item["id"])
+
+        time.sleep(3)
+
+        print("Criando container do carrossel...")
+        container = graph_post(
+            f"{env['IG_USER_ID']}/media",
+            media_type="CAROUSEL",
+            children=",".join(children),
+            caption=caption,
+            access_token=env["IG_ACCESS_TOKEN"],
+        )
+    else:
+        print("Criando container de midia...")
+        container = graph_post(
+            f"{env['IG_USER_ID']}/media",
+            image_url=imagens[0],
+            caption=caption,
+            access_token=env["IG_ACCESS_TOKEN"],
+        )
+
     creation_id = container["id"]
     print("Container criado:", creation_id)
 
@@ -132,7 +154,6 @@ def publicar_feed(env, produto, publicar=False, link_afiliado=None):
     print("Publicado! ID do post:", media_id)
 
     if link_afiliado:
-        comentar_link(env, media_id, link_afiliado)
         registrar_publicacao("feed", produto, link_afiliado, media_id)
 
 
@@ -185,12 +206,11 @@ def publicar_reels(env, produto, video_url, publicar=False, link_afiliado=None):
     print("Publicado! ID do Reels:", media_id)
 
     if link_afiliado:
-        comentar_link(env, media_id, link_afiliado)
         registrar_publicacao("reels", produto, link_afiliado, media_id)
 
 
 def publicar_story(env, produto, publicar=False, link_afiliado=None):
-    imagem = produto["imagem"]
+    imagem = _lista_imagens(produto)[0]
 
     print("=== PREVIA DO STORY ===")
     print(f"Produto: {produto['titulo']}")

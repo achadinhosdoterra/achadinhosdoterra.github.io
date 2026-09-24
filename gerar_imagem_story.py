@@ -36,11 +36,18 @@ def _preco_str(valor):
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
+def _primeira_imagem(produto):
+    urls = produto.get("imagens") or produto.get("imagem")
+    if isinstance(urls, str):
+        urls = urls.split("|")
+    return urls[0]
+
+
 def gerar_imagem_story(produto, pasta_saida):
     pasta_saida = Path(pasta_saida)
     pasta_saida.mkdir(parents=True, exist_ok=True)
 
-    with urllib.request.urlopen(produto["imagem"], timeout=30) as resp:
+    with urllib.request.urlopen(_primeira_imagem(produto), timeout=30) as resp:
         foto = Image.open(BytesIO(resp.read())).convert("RGB")
 
     canvas = Image.new("RGB", (LARGURA, ALTURA), COR_FUNDO)
@@ -91,8 +98,8 @@ def gerar_imagem_story(produto, pasta_saida):
     return caminho
 
 
-def normalizar_imagem_feed(produto, pasta_saida):
-    """Rehospeda a foto do produto como JPEG, sem overlay.
+def normalizar_imagens_feed(produto, pasta_saida):
+    """Rehospeda as fotos do produto como JPEG, sem overlay (uma ou varias -> carrossel).
 
     Algumas CDNs de origem (ex: Shopee) sao recusadas pelo fetcher da Meta
     mesmo com a imagem acessivel normalmente; hospedar no proprio repo
@@ -101,10 +108,18 @@ def normalizar_imagem_feed(produto, pasta_saida):
     pasta_saida = Path(pasta_saida)
     pasta_saida.mkdir(parents=True, exist_ok=True)
 
-    with urllib.request.urlopen(produto["imagem"], timeout=30) as resp:
-        foto = Image.open(BytesIO(resp.read())).convert("RGB")
+    urls = produto.get("imagens") or produto.get("imagem")
+    if isinstance(urls, str):
+        urls = urls.split("|")
+    urls = [u for u in urls if u]
 
-    nome_arquivo = f"{_slug(produto['titulo'])}-{int(time.time())}.jpg"
-    caminho = pasta_saida / nome_arquivo
-    foto.save(caminho, "JPEG", quality=92)
-    return caminho
+    caminhos = []
+    for i, url in enumerate(urls):
+        with urllib.request.urlopen(url, timeout=30) as resp:
+            foto = Image.open(BytesIO(resp.read())).convert("RGB")
+
+        nome_arquivo = f"{_slug(produto['titulo'])}-{int(time.time())}-{i}.jpg"
+        caminho = pasta_saida / nome_arquivo
+        foto.save(caminho, "JPEG", quality=92)
+        caminhos.append(caminho)
+    return caminhos

@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-from gerar_imagem_story import gerar_imagem_story, normalizar_imagem_feed
+from gerar_imagem_story import gerar_imagem_story, normalizar_imagens_feed
 from postar_instagram import load_env, publicar_feed, publicar_story
 
 FILA_PATH = Path(__file__).parent / "fila.csv"
@@ -15,7 +15,7 @@ TEMP_PATH = Path(__file__).parent / "temp_video" / "post_atual.json"
 IMAGENS_DIR = Path(__file__).parent / "imagens_geradas"
 STORIES_DIR = Path(__file__).parent / "stories_geradas"
 
-REPO = "charlysthonadm-cpu/achadinhosdoterra"
+REPO = "achadinhosdoterra/achadinhosdoterra.github.io"
 MAX_STORIES_POR_PRODUTO = 2
 
 
@@ -71,16 +71,21 @@ def preparar(tipo):
         print(f"Fila vazia: nenhum produto disponivel para {tipo}. Abastecer fila.csv.")
         return
 
+    base = Path(__file__).parent
+    TEMP_PATH.parent.mkdir(parents=True, exist_ok=True)
+
     if tipo == "feed":
-        caminho = normalizar_imagem_feed(produto, IMAGENS_DIR)
+        caminhos = normalizar_imagens_feed(produto, IMAGENS_DIR)
+        relativos = [c.relative_to(base).as_posix() for c in caminhos]
+        with TEMP_PATH.open("w", encoding="utf-8") as f:
+            json.dump({"tipo": tipo, "produto": produto, "imagens_geradas": relativos}, f, ensure_ascii=False)
+        print(f"Imagens preparadas para feed ({len(relativos)}):", relativos)
     else:
         caminho = gerar_imagem_story(produto, STORIES_DIR)
-
-    caminho_relativo = caminho.relative_to(Path(__file__).parent).as_posix()
-    TEMP_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with TEMP_PATH.open("w", encoding="utf-8") as f:
-        json.dump({"tipo": tipo, "produto": produto, "imagem_gerada": caminho_relativo}, f, ensure_ascii=False)
-    print(f"Imagem preparada para {tipo}:", caminho_relativo)
+        relativo = caminho.relative_to(base).as_posix()
+        with TEMP_PATH.open("w", encoding="utf-8") as f:
+            json.dump({"tipo": tipo, "produto": produto, "imagens_geradas": [relativo]}, f, ensure_ascii=False)
+        print("Imagem preparada para story:", relativo)
 
 
 def publicar_preparado(publicar):
@@ -91,7 +96,9 @@ def publicar_preparado(publicar):
         dados = json.load(f)
 
     produto = dict(dados["produto"])
-    produto["imagem"] = f"https://raw.githubusercontent.com/{REPO}/main/{dados['imagem_gerada']}"
+    produto["imagens"] = [
+        f"https://raw.githubusercontent.com/{REPO}/main/{rel}" for rel in dados["imagens_geradas"]
+    ]
 
     env = load_env()
     if dados["tipo"] == "feed":
