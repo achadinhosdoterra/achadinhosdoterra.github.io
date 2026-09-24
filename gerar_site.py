@@ -3,6 +3,7 @@ import html
 from pathlib import Path
 
 CSV_PATH = Path(__file__).parent / "achadinhos.csv"
+CSV_PATH_SHOPEE = Path(__file__).parent / "achadinhos_shopee.csv"
 OUTPUT_DIR = Path(__file__).parent / "docs"
 OUTPUT_PATH = OUTPUT_DIR / "index.html"
 
@@ -191,8 +192,11 @@ def render_card(produto):
 
 
 def main():
-    with CSV_PATH.open(encoding="utf-8-sig") as f:
-        produtos = list(csv.DictReader(f))
+    produtos = []
+    for caminho in (CSV_PATH, CSV_PATH_SHOPEE):
+        if caminho.exists():
+            with caminho.open(encoding="utf-8-sig") as f:
+                produtos.extend(csv.DictReader(f))
 
     cards_html = "\n".join(render_card(p) for p in produtos)
     page = PAGE_TEMPLATE.format(cards=cards_html)
