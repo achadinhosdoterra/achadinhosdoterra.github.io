@@ -52,12 +52,15 @@ def escolher_para_story():
     postados_feed = [p for p in publicados if p.get("tipo") == "feed"]
     postados_feed.sort(key=lambda p: p.get("data_publicacao", ""), reverse=True)
 
-    for p in postados_feed:
-        titulo = p["titulo"]
-        if titulo in fila_por_titulo and contagem_stories[titulo] < MAX_STORIES_POR_PRODUTO:
-            return fila_por_titulo[titulo]
+    titulos_vistos = list(dict.fromkeys(p["titulo"] for p in postados_feed))
+    candidatos = [
+        t for t in titulos_vistos if t in fila_por_titulo and contagem_stories[t] < MAX_STORIES_POR_PRODUTO
+    ]
+    if candidatos:
+        candidatos.sort(key=lambda t: contagem_stories[t])
+        return fila_por_titulo[candidatos[0]]
 
-    ja_postados_feed = {p["titulo"] for p in postados_feed}
+    ja_postados_feed = set(titulos_vistos)
     for produto in fila:
         if produto["titulo"] not in ja_postados_feed and contagem_stories[produto["titulo"]] == 0:
             return produto
