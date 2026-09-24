@@ -274,17 +274,30 @@ def main():
 
     produtos.sort(key=lambda p: p.get("data_publicacao", ""), reverse=True)
 
-    datas = list(OrderedDict.fromkeys(p.get("data_publicacao", "") for p in produtos))
+    # um card por produto: prioriza feed > reels > story, evitando repetir
+    # o mesmo produto quando ele ganha uma story de reforco depois do post.
+    prioridade_tipo = {"feed": 0, "reels": 1, "story": 2}
+    melhores = {}
+    for p in produtos:
+        titulo = p.get("titulo", "")
+        prioridade = prioridade_tipo.get(p.get("tipo", ""), 3)
+        atual = melhores.get(titulo)
+        if atual is None or prioridade < atual[0]:
+            melhores[titulo] = (prioridade, p)
+    produtos_unicos = [p for _, p in melhores.values()]
+    produtos_unicos.sort(key=lambda p: p.get("data_publicacao", ""), reverse=True)
+
+    datas = list(OrderedDict.fromkeys(p.get("data_publicacao", "") for p in produtos_unicos))
     opcoes_data = "\n".join(
         f'<option value="{html.escape(d)}">{formatar_data(d)}</option>' for d in datas if d
     )
 
-    cards_html = "\n".join(render_card(p) for p in produtos)
+    cards_html = "\n".join(render_card(p) for p in produtos_unicos)
     page = PAGE_TEMPLATE.format(cards=cards_html, opcoes_data=opcoes_data)
 
     OUTPUT_DIR.mkdir(exist_ok=True)
     OUTPUT_PATH.write_text(page, encoding="utf-8")
-    print(f"Site gerado com {len(produtos)} produtos publicados em {OUTPUT_PATH}")
+    print(f"Site gerado com {len(produtos_unicos)} produtos publicados em {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":
