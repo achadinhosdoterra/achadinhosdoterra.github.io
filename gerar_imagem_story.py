@@ -89,3 +89,22 @@ def gerar_imagem_story(produto, pasta_saida):
     caminho = pasta_saida / nome_arquivo
     canvas.save(caminho, "JPEG", quality=90)
     return caminho
+
+
+def normalizar_imagem_feed(produto, pasta_saida):
+    """Rehospeda a foto do produto como JPEG, sem overlay.
+
+    Algumas CDNs de origem (ex: Shopee) sao recusadas pelo fetcher da Meta
+    mesmo com a imagem acessivel normalmente; hospedar no proprio repo
+    contorna isso.
+    """
+    pasta_saida = Path(pasta_saida)
+    pasta_saida.mkdir(parents=True, exist_ok=True)
+
+    with urllib.request.urlopen(produto["imagem"], timeout=30) as resp:
+        foto = Image.open(BytesIO(resp.read())).convert("RGB")
+
+    nome_arquivo = f"{_slug(produto['titulo'])}-{int(time.time())}.jpg"
+    caminho = pasta_saida / nome_arquivo
+    foto.save(caminho, "JPEG", quality=92)
+    return caminho

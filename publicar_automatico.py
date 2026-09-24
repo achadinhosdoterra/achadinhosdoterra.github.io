@@ -6,12 +6,13 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-from gerar_imagem_story import gerar_imagem_story
+from gerar_imagem_story import gerar_imagem_story, normalizar_imagem_feed
 from postar_instagram import load_env, publicar_feed, publicar_story
 
 FILA_PATH = Path(__file__).parent / "fila.csv"
 PUBLICADOS_PATH = Path(__file__).parent / "publicados.csv"
-STORY_TEMP_PATH = Path(__file__).parent / "temp_video" / "story_atual.json"
+TEMP_PATH = Path(__file__).parent / "temp_video" / "post_atual.json"
+IMAGENS_DIR = Path(__file__).parent / "imagens_geradas"
 STORIES_DIR = Path(__file__).parent / "stories_geradas"
 
 REPO = "charlysthonadm-cpu/achadinhosdoterra"
@@ -64,57 +65,55 @@ def escolher_para_story():
     return None
 
 
-def preparar_story():
-    produto = escolher_para_story()
+def preparar(tipo):
+    produto = escolher_para_feed() if tipo == "feed" else escolher_para_story()
     if not produto:
-        print("Fila vazia: nenhum produto disponivel para story. Abastecer fila.csv.")
+        print(f"Fila vazia: nenhum produto disponivel para {tipo}. Abastecer fila.csv.")
         return
-    caminho = gerar_imagem_story(produto, STORIES_DIR)
+
+    if tipo == "feed":
+        caminho = normalizar_imagem_feed(produto, IMAGENS_DIR)
+    else:
+        caminho = gerar_imagem_story(produto, STORIES_DIR)
+
     caminho_relativo = caminho.relative_to(Path(__file__).parent).as_posix()
-    STORY_TEMP_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with STORY_TEMP_PATH.open("w", encoding="utf-8") as f:
-        json.dump({"produto": produto, "imagem_gerada": caminho_relativo}, f, ensure_ascii=False)
-    print("Imagem de story gerada:", caminho_relativo)
+    TEMP_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with TEMP_PATH.open("w", encoding="utf-8") as f:
+        json.dump({"tipo": tipo, "produto": produto, "imagem_gerada": caminho_relativo}, f, ensure_ascii=False)
+    print(f"Imagem preparada para {tipo}:", caminho_relativo)
 
 
-def publicar_story_preparado(publicar):
-    if not STORY_TEMP_PATH.exists():
-        print("Nenhum story preparado (rode --preparar antes). Nada a fazer.")
+def publicar_preparado(publicar):
+    if not TEMP_PATH.exists():
+        print("Nenhum post preparado (rode --preparar antes). Nada a fazer.")
         return
-    with STORY_TEMP_PATH.open(encoding="utf-8") as f:
+    with TEMP_PATH.open(encoding="utf-8") as f:
         dados = json.load(f)
+
     produto = dict(dados["produto"])
-    url_publica = f"https://raw.githubusercontent.com/{REPO}/main/{dados['imagem_gerada']}"
-    produto["imagem"] = url_publica
+    produto["imagem"] = f"https://raw.githubusercontent.com/{REPO}/main/{dados['imagem_gerada']}"
 
     env = load_env()
-    publicar_story(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
-    STORY_TEMP_PATH.unlink()
+    if dados["tipo"] == "feed":
+        publicar_feed(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
+    else:
+        publicar_story(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
 
-
-def publicar_feed_automatico(publicar):
-    produto = escolher_para_feed()
-    if not produto:
-        print("Fila vazia: nenhum produto novo disponivel para feed. Abastecer fila.csv.")
-        return
-    env = load_env()
-    publicar_feed(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
+    TEMP_PATH.unlink()
 
 
 if __name__ == "__main__":
     publicar = "--publicar" in sys.argv
-    preparar = "--preparar" in sys.argv
+    preparar_flag = "--preparar" in sys.argv
     tipo = "feed"
     for arg in sys.argv[1:]:
         if arg.startswith("--tipo="):
             tipo = arg.split("=", 1)[1]
 
-    if tipo == "feed":
-        publicar_feed_automatico(publicar)
-    elif tipo == "story":
-        if preparar:
-            preparar_story()
-        else:
-            publicar_story_preparado(publicar)
-    else:
+    if tipo not in ("feed", "story"):
         raise SystemExit("--tipo= deve ser feed ou story")
+
+    if preparar_flag:
+        preparar(tipo)
+    else:
+        publicar_preparado(publicar)

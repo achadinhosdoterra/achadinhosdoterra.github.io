@@ -26,13 +26,28 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
+      - name: Gerar imagem hospedada do produto
+        run: python publicar_automatico.py --tipo=feed --preparar
+
+      - name: Commit e push da imagem gerada
+        run: |
+          git config user.name "Achadinhos Bot"
+          git config user.email "achadinhos@achadinhosdoterra.local"
+          git add imagens_geradas
+          git diff --cached --quiet && echo "Sem imagem nova" && exit 0
+          git commit -m "Gera imagem de feed - $(date +'%d/%m/%Y %H:%M')"
+          git push
+
+      - name: Aguardar propagacao do arquivo publico
+        run: sleep 20
+
       - name: Publicar proximo produto da fila no feed
         run: python publicar_automatico.py --tipo=feed --publicar
 
       - name: Regenerar site
         run: python gerar_site.py
 
-      - name: Commit e push
+      - name: Commit e push do registro
         run: |
           git config user.name "Achadinhos Bot"
           git config user.email "achadinhos@achadinhosdoterra.local"
