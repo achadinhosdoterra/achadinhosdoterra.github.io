@@ -1,16 +1,23 @@
 import csv
 import html
+from collections import OrderedDict
 from pathlib import Path
 
-CSV_PATH = Path(__file__).parent / "achadinhos.csv"
-CSV_PATH_SHOPEE = Path(__file__).parent / "achadinhos_shopee.csv"
+PUBLICADOS_PATH = Path(__file__).parent / "publicados.csv"
 OUTPUT_DIR = Path(__file__).parent / "docs"
 OUTPUT_PATH = OUTPUT_DIR / "index.html"
 
+TIPO_LABEL = {
+    "feed": "Feed",
+    "reels": "Reels",
+    "story": "Story",
+}
+
 CARD_TEMPLATE = """
-<a class="card" href="{link}" target="_blank" rel="noopener noreferrer sponsored">
+<a class="card" data-data="{data_publicacao}" href="{link}" target="_blank" rel="noopener noreferrer sponsored">
   <div class="card-img"><img src="{imagem}" alt="{titulo}"></div>
   <div class="card-body">
+    <span class="data-post">{data_formatada} &middot; {tipo_label}</span>
     <p class="titulo">{titulo}</p>
     <div class="precos">
       <span class="preco-atual">R$ {preco_atual}</span>
@@ -52,9 +59,21 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     font-size: 1.6rem;
   }}
   header p {{
-    margin: 0;
+    margin: 0 0 16px;
     color: var(--muted);
     font-size: 0.9rem;
+  }}
+  .filtro {{
+    display: flex;
+    justify-content: center;
+  }}
+  .filtro select {{
+    background: var(--card-bg);
+    color: var(--text);
+    border: 1px solid #2a2e37;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }}
   .grid {{
     display: grid;
@@ -77,6 +96,9 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .card:active {{
     transform: scale(0.97);
   }}
+  .card.oculto {{
+    display: none;
+  }}
   .card-img {{
     aspect-ratio: 1 / 1;
     background: #fff;
@@ -92,6 +114,12 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     flex-direction: column;
     gap: 6px;
     flex: 1;
+  }}
+  .data-post {{
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }}
   .titulo {{
     font-size: 0.82rem;
@@ -138,6 +166,12 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     padding: 8px 0;
     border-radius: 8px;
   }}
+  .vazio {{
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 16px;
+    display: none;
+  }}
   footer {{
     text-align: center;
     color: var(--muted);
@@ -149,17 +183,52 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 <body>
 <header>
   <h1>🌎 Achadinhos do Terra</h1>
-  <p>Achadinhos que valem a pena, atualizados todo dia</p>
+  <p>Achadinhos postados no Instagram, atualizados conforme a gente posta</p>
+  <div class="filtro">
+    <select id="filtro-data" onchange="filtrarPorData(this.value)">
+      <option value="todas">Todas as datas</option>
+      {opcoes_data}
+    </select>
+  </div>
 </header>
-<div class="grid">
+<div class="grid" id="grid">
 {cards}
 </div>
+<p class="vazio" id="vazio">Nenhum achadinho postado nessa data.</p>
 <footer>
-  Atualizado automaticamente todos os dias &middot; Alguns links podem gerar comissão para @achadinhosdoterra
+  Só aparecem aqui produtos já postados no feed, Reels ou Stories &middot; Alguns links podem gerar comissão para @achadinhosdoterra
 </footer>
+<script>
+function filtrarPorData(data) {{
+  var cards = document.querySelectorAll('#grid .card');
+  var visiveis = 0;
+  cards.forEach(function(card) {{
+    if (data === 'todas' || card.dataset.data === data) {{
+      card.classList.remove('oculto');
+      visiveis++;
+    }} else {{
+      card.classList.add('oculto');
+    }}
+  }});
+  document.getElementById('vazio').style.display = visiveis === 0 ? 'block' : 'none';
+}}
+</script>
 </body>
 </html>
 """
+
+MESES = [
+    "jan", "fev", "mar", "abr", "mai", "jun",
+    "jul", "ago", "set", "out", "nov", "dez",
+]
+
+
+def formatar_data(data_iso):
+    try:
+        ano, mes, dia = data_iso.split("-")
+        return f"{int(dia)} {MESES[int(mes) - 1]}"
+    except Exception:
+        return data_iso
 
 
 def render_card(produto):
@@ -171,7 +240,8 @@ def render_card(produto):
     if preco_anterior:
         try:
             valor = float(preco_anterior)
-            preco_anterior_html = f'<span class="preco-anterior">R$ {valor:.2f}</span>'.replace(".", ",")
+            if valor > float(produto.get("preco_atual", 0)):
+                preco_anterior_html = f'<span class="preco-anterior">R$ {valor:.2f}</span>'.replace(".", ",")
         except ValueError:
             pass
 
@@ -181,6 +251,8 @@ def render_card(produto):
     except ValueError:
         pass
 
+    data_publicacao = produto.get("data_publicacao", "")
+
     return CARD_TEMPLATE.format(
         link=html.escape(produto.get("link", "#")),
         imagem=html.escape(produto.get("imagem", "")),
@@ -188,22 +260,31 @@ def render_card(produto):
         preco_atual=preco_atual,
         preco_anterior_html=preco_anterior_html,
         desconto_html=desconto_html,
+        data_publicacao=html.escape(data_publicacao),
+        data_formatada=formatar_data(data_publicacao),
+        tipo_label=TIPO_LABEL.get(produto.get("tipo", ""), produto.get("tipo", "")),
     )
 
 
 def main():
     produtos = []
-    for caminho in (CSV_PATH, CSV_PATH_SHOPEE):
-        if caminho.exists():
-            with caminho.open(encoding="utf-8-sig") as f:
-                produtos.extend(csv.DictReader(f))
+    if PUBLICADOS_PATH.exists():
+        with PUBLICADOS_PATH.open(encoding="utf-8-sig") as f:
+            produtos = list(csv.DictReader(f))
+
+    produtos.sort(key=lambda p: p.get("data_publicacao", ""), reverse=True)
+
+    datas = list(OrderedDict.fromkeys(p.get("data_publicacao", "") for p in produtos))
+    opcoes_data = "\n".join(
+        f'<option value="{html.escape(d)}">{formatar_data(d)}</option>' for d in datas if d
+    )
 
     cards_html = "\n".join(render_card(p) for p in produtos)
-    page = PAGE_TEMPLATE.format(cards=cards_html)
+    page = PAGE_TEMPLATE.format(cards=cards_html, opcoes_data=opcoes_data)
 
     OUTPUT_DIR.mkdir(exist_ok=True)
     OUTPUT_PATH.write_text(page, encoding="utf-8")
-    print(f"Site gerado com {len(produtos)} produtos em {OUTPUT_PATH}")
+    print(f"Site gerado com {len(produtos)} produtos publicados em {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":
