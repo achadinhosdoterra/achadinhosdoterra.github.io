@@ -28,9 +28,21 @@
     font-size: 1.6rem;
   }
   header p {
-    margin: 0;
+    margin: 0 0 16px;
     color: var(--muted);
     font-size: 0.9rem;
+  }
+  .filtro {
+    display: flex;
+    justify-content: center;
+  }
+  .filtro select {
+    background: var(--card-bg);
+    color: var(--text);
+    border: 1px solid #2a2e37;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
   .grid {
     display: grid;
@@ -53,6 +65,9 @@
   .card:active {
     transform: scale(0.97);
   }
+  .card.oculto {
+    display: none;
+  }
   .card-img {
     aspect-ratio: 1 / 1;
     background: #fff;
@@ -68,6 +83,12 @@
     flex-direction: column;
     gap: 6px;
     flex: 1;
+  }
+  .data-post {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }
   .titulo {
     font-size: 0.82rem;
@@ -114,6 +135,12 @@
     padding: 8px 0;
     border-radius: 8px;
   }
+  .vazio {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 16px;
+    display: none;
+  }
   footer {
     text-align: center;
     color: var(--muted);
@@ -125,810 +152,64 @@
 <body>
 <header>
   <h1>🌎 Achadinhos do Terra</h1>
-  <p>Achadinhos que valem a pena, atualizados todo dia</p>
+  <p>Achadinhos postados no Instagram, atualizados conforme a gente posta</p>
+  <div class="filtro">
+    <select id="filtro-data" onchange="filtrarPorData(this.value)">
+      <option value="todas">Todas as datas</option>
+      <option value="2026-09-19">19 set</option>
+    </select>
+  </div>
 </header>
-<div class="grid">
+<div class="grid" id="grid">
 
-<a class="card" href="https://www.mercadolivre.com.br/creatina-1kg-suplemento-monohidratada-em-po-100-pura-soldiers-nutrition/p/MLB18725310?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_998463-MLA116907384785_082026-AB.webp" alt="Creatina 1kg Suplemento Monohidratada em pó 100% Pura - Soldiers Nutrition"></div>
+<a class="card" data-data="2026-09-19" href="https://meli.la/1rCokM8" target="_blank" rel="noopener noreferrer sponsored">
+  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_946503-MLB82989859698_032025-AB-kit-6-cuecas-lupo-boxer-box-sem-costura-basic-microfibra.webp" alt="Kit 6 Cuecas Lupo Boxer Box Sem Costura Basic Microfibra"></div>
   <div class="card-body">
-    <p class="titulo">Creatina 1kg Suplemento Monohidratada em pó 100% Pura - Soldiers Nutrition</p>
+    <span class="data-post">19 set &middot; Feed</span>
+    <p class="titulo">Kit 6 Cuecas Lupo Boxer Box Sem Costura Basic Microfibra</p>
     <div class="precos">
-      <span class="preco-atual">R$ 77,00</span>
-      <span class="preco-anterior">R$ 239,00</span>
+      <span class="preco-atual">R$ 131,00</span>
+      <span class="preco-anterior">R$ 288,00</span>
     </div>
-    <span class="desconto">67% OFF</span>
+    <span class="desconto">54% OFF</span>
     <span class="btn">Ver oferta</span>
   </div>
 </a>
 
 
-<a class="card" href="https://www.mercadolivre.com.br/whey-protein-1kg-whey-pro-max-titanium-sabor-baunilha-bcaa-e-aminoacidos/p/MLB6087974?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_960337-MLA111724818522_062026-AB.webp" alt="Whey Protein 1kg Whey Pro Max Titanium Sabor Baunilha BCAA e Aminoácidos"></div>
+<a class="card" data-data="2026-09-19" href="https://meli.la/1rCokM8" target="_blank" rel="noopener noreferrer sponsored">
+  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_946503-MLB82989859698_032025-AB-kit-6-cuecas-lupo-boxer-box-sem-costura-basic-microfibra.webp" alt="Kit 6 Cuecas Lupo Boxer Box Sem Costura Basic Microfibra"></div>
   <div class="card-body">
-    <p class="titulo">Whey Protein 1kg Whey Pro Max Titanium Sabor Baunilha BCAA e Aminoácidos</p>
+    <span class="data-post">19 set &middot; Reels</span>
+    <p class="titulo">Kit 6 Cuecas Lupo Boxer Box Sem Costura Basic Microfibra</p>
     <div class="precos">
-      <span class="preco-atual">R$ 78,00</span>
-      <span class="preco-anterior">R$ 179,00</span>
+      <span class="preco-atual">R$ 131,00</span>
+      <span class="preco-anterior">R$ 288,00</span>
     </div>
-    <span class="desconto">56% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/parafusadeira-furadeira-de-impacto-the-black-tools-profissional-tb-21px-2-baterias-com-maleta-60hz-amarelo/p/MLB30144703?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_981459-MLA117136184907_092026-AB.webp" alt="Parafusadeira Furadeira De Impacto The Black Tools Profissional TB-21PX 2 Baterias Com Maleta 60Hz Amarelo"></div>
-  <div class="card-body">
-    <p class="titulo">Parafusadeira Furadeira De Impacto The Black Tools Profissional TB-21PX 2 Baterias Com Maleta 60Hz Amarelo</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 159,00</span>
-      <span class="preco-anterior">R$ 319,00</span>
-    </div>
-    <span class="desconto">50% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/creatina-monohidratada-pura-1kg-dark-lab-unidade-sem-sabor/p/MLB25929487?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_603981-MLA115262802698_082026-AB.webp" alt="Creatina Monohidratada Pura 1kg Dark Lab Unidade Sem sabor"></div>
-  <div class="card-body">
-    <p class="titulo">Creatina Monohidratada Pura 1kg Dark Lab Unidade Sem sabor</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 78,00</span>
-      <span class="preco-anterior">R$ 159,00</span>
-    </div>
-    <span class="desconto">50% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/creatina-monohidratada-pura-500g-dark-lab-unidade/p/MLB26796581?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_734286-MLA115263082370_082026-AB.webp" alt="Creatina Monohidratada Pura 500g Dark Lab Unidade"></div>
-  <div class="card-body">
-    <p class="titulo">Creatina Monohidratada Pura 500g Dark Lab Unidade</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 49,00</span>
-      <span class="preco-anterior">R$ 99,00</span>
-    </div>
-    <span class="desconto">50% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/kit-10-pote-de-vidro-marmita-hermetico-640ml-freezer-fitness-rishon/p/MLB63904966?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_900432-MLA113518359539_062026-AB.webp" alt="Kit 10 Pote De Vidro Marmita Hermético 640ml Freezer Fitness Rishon"></div>
-  <div class="card-body">
-    <p class="titulo">Kit 10 Pote De Vidro Marmita Hermético 640ml Freezer Fitness Rishon</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 104,00</span>
-      <span class="preco-anterior">R$ 188,00</span>
-    </div>
-    <span class="desconto">44% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/kit-10-potes-hermeticos-vidro-640ml-starhouse-marmita-forno-micro-ondas-airfryer-com-4-travas-de-super-vedacao/p/MLB53222689?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_942823-MLA113526261849_062026-AB.webp" alt="Kit 10 Potes Herméticos Vidro 640ml Starhouse Marmita Forno Micro-ondas Airfryer com 4 travas de super vedação"></div>
-  <div class="card-body">
-    <p class="titulo">Kit 10 Potes Herméticos Vidro 640ml Starhouse Marmita Forno Micro-ondas Airfryer com 4 travas de super vedação</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 107,00</span>
-      <span class="preco-anterior">R$ 189,00</span>
-    </div>
-    <span class="desconto">43% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/creatina-250g-monohidratada-growth-supplements-sem-sabor/p/MLB19603205?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_662415-MLA97812910758_112025-AB.webp" alt="Creatina (250g) Monohidratada - Growth Supplements Sem Sabor"></div>
-  <div class="card-body">
-    <p class="titulo">Creatina (250g) Monohidratada - Growth Supplements Sem Sabor</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 42,00</span>
-      <span class="preco-anterior">R$ 64,00</span>
-    </div>
-    <span class="desconto">33% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-4592320910-kit-4-camiseta-dry-fit-sandrini-masculina-academia-caminhada-_JM?searchVariation=186408020313" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_626928-MLB82004918446_022025-AB-kit-4-camiseta-dry-fit-sandrini-masculina-academia-caminhada.webp" alt="Kit 4 Camiseta Dry-fit Sandrini Masculina Academia Caminhada"></div>
-  <div class="card-body">
-    <p class="titulo">Kit 4 Camiseta Dry-fit Sandrini Masculina Academia Caminhada</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 59,00</span>
-      <span class="preco-anterior">R$ 135,00</span>
-    </div>
-    <span class="desconto">55% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://click1.mercadolivre.com.br/mclics/clicks/external/MLB/count?a=1JGdoaSSDcNPLxdSrYqNFvIzbBJcFbp31UbI3b3YmTT35%2BFqccPhL0yzPe6oFOt0uBZj2Sd%2FDsybqlamRdv9b8Y5E9HGXkp4CaGYEjsiLHvC5z6x4cx%2BqvpQCW7BDwMF0FNIZCAMjNdjI02etldwOxcm%2FmsGKdl8GRKUS284eOanWp6a0fhhyGW%2F8LY8q5HlfAc1wZjuIBymslxrnVXbYcYuW8aSrgU2kmQaktk2VLJmuCd6iHdmPDmupIe4As3Eb%2FoMhipjyCYg4Dfhdc%2FKoaWW3E5jFQ0mCBdGafyqbTmI1DeRAEOd80Dcyx2pRvSSFRH1Y6UUc0fgfW%2BUGogf63ukmcKmDbCGZ7TowfUy2ndj5km7N5%2FnG4TmmekgRkMe9%2FDHxMcHJ3InXol7wlCM6qqjt05DPpMYUysMT1LIDS66u3xykdefc2MDv%2BAuSrMQvM%2BBi1TMX%2BR9IhfOjEgcIV6ok4g6us75NNnj27aXI87f4EhYzuRRVff11OdvyfaQO0vymfSIUkoet4ljmcJLaGP0i%2F0IfFD3%2FS3NXZ5NTIOUbwBBtp%2BAqLKCG4Qk%2BnJiPlku1c4PCA%3D%3D&amp;url=https%3A%2F%2Fwww.mercadolivre.com.br%2Fpre-treino-venom-underground-300g-mango-loko-dark-lab-60-doses%2Fp%2FMLB36211243%23searchVariation%3DMLB36211243%26position%3D16%26search_layout%3Dgrid%26deal_print_id%3Dafdae2aa-200b-4296-8157-f1be99e72cc1%26tracking_id%3De87777cb-5833-41a6-b5d5-c6f65360483c&amp;lm=-132694175" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_999459-MLA99539534758_122025-AB.webp" alt="Pre Treino Venom Underground 300g Mango Loko Dark Lab - 60 Doses"></div>
-  <div class="card-body">
-    <p class="titulo">Pre Treino Venom Underground 300g Mango Loko Dark Lab - 60 Doses</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 89,00</span>
-      <span class="preco-anterior">R$ 399,00</span>
-    </div>
-    <span class="desconto">77% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-5532075156-tnis-kappa-pulse-rx-unissex-corrida-conforto-_JM?searchVariation=184470902110" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_788146-MLB116537413239_082026-AB-tnis-kappa-pulse-rx-unissex-corrida-conforto.webp" alt="Tênis Kappa Pulse Rx Unissex Corrida Conforto"></div>
-  <div class="card-body">
-    <p class="titulo">Tênis Kappa Pulse Rx Unissex Corrida Conforto</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 135,00</span>
-      <span class="preco-anterior">R$ 289,00</span>
-    </div>
-    <span class="desconto">53% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/projetor-portatil-4k-hd-android-110-smart-wifi-5g-bluetooth/up/MLBU767944712?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_828936-MLB88748640584_082025-AB--projetor-portatil-4k-hd-android-110-smart-wifi-5g-bluetooth.webp" alt="Projetor Portátil 4k Hd Android 11.0 Smart Wifi 5g Bluetooth Branco 127/220v"></div>
-  <div class="card-body">
-    <p class="titulo">Projetor Portátil 4k Hd Android 11.0 Smart Wifi 5g Bluetooth Branco 127/220v</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 168,00</span>
-      <span class="preco-anterior">R$ 349,00</span>
-    </div>
-    <span class="desconto">51% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/creatina-monohidratada-500g-em-po-growth/p/MLB66637233?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_870227-MLA116260093488_092026-AB.webp" alt="Creatina Monohidratada 500g em Pó (Growth)"></div>
-  <div class="card-body">
-    <p class="titulo">Creatina Monohidratada 500g em Pó (Growth)</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 78,00</span>
-      <span class="preco-anterior">R$ 104,00</span>
-    </div>
-    <span class="desconto">24% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/bicicleta-ergometrica-spinning-inercia-5kg-velocron-v500-preto/p/MLB66042141?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_699115-MLA107760441255_022026-AB.webp" alt="Bicicleta Ergométrica Spinning Inércia 5kg Velocron V500 Preto"></div>
-  <div class="card-body">
-    <p class="titulo">Bicicleta Ergométrica Spinning Inércia 5kg Velocron V500 Preto</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 583,00</span>
-      <span class="preco-anterior">R$ 2000,00</span>
-    </div>
-    <span class="desconto">70% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/fechadura-digital-de-sobrepor-intelbras-fr-101/p/MLB20938205?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_985748-MLA113670424044_072026-AB.webp" alt="Fechadura Digital De Sobrepor Intelbras Fr 101"></div>
-  <div class="card-body">
-    <p class="titulo">Fechadura Digital De Sobrepor Intelbras Fr 101</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 213,00</span>
-      <span class="preco-anterior">R$ 399,00</span>
-    </div>
-    <span class="desconto">46% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/mochila-jiesipote-9242-prova-dagua-reforcada-expansivel-cor-preto/p/MLB74678961?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_974980-MLA112776013576_062026-AB.webp" alt="Mochila jiesipote-9242 À Prova D&#x27;água Reforçada Expansível Cor Preto"></div>
-  <div class="card-body">
-    <p class="titulo">Mochila jiesipote-9242 À Prova D&#x27;água Reforçada Expansível Cor Preto</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 84,00</span>
-      <span class="preco-anterior">R$ 269,00</span>
-    </div>
-    <span class="desconto">68% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/massageador-pescoco-ombro-recarregavel-maozinha-deep-3d/up/MLBU3878583229?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_971960-MLB109230680484_042026-AB--massageador-pescoco-ombro-recarregavel-maozinha-deep-3d.webp" alt="Massageador Pescoço Ombro Recarregável Maozinha Deep 3d 127/220v Verde-escuro"></div>
-  <div class="card-body">
-    <p class="titulo">Massageador Pescoço Ombro Recarregável Maozinha Deep 3d 127/220v Verde-escuro</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 77,00</span>
-      <span class="preco-anterior">R$ 240,00</span>
-    </div>
-    <span class="desconto">67% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-3792649671-calca-alfaiataria-feminina-wide-leg-social-cintura-alta-_JM?searchVariation=181184828198" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_750390-MLB87894346877_072025-AB-calca-alfaiataria-feminina-wide-leg-social-cintura-alta.webp" alt="Calça Alfaiataria Feminina Wide Leg Social Cintura Alta"></div>
-  <div class="card-body">
-    <p class="titulo">Calça Alfaiataria Feminina Wide Leg Social Cintura Alta</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 41,00</span>
-      <span class="preco-anterior">R$ 73,00</span>
-    </div>
-    <span class="desconto">43% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-3670554997-calca-jeans-pantalona-wide-leg-feminina-cintura-alta-larga-_JM?searchVariation=180371952132" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_840237-MLB110593856228_052026-AB-calca-jeans-pantalona-wide-leg-feminina-cintura-alta-larga.webp" alt="Calça Jeans Pantalona Wide Leg Feminina Cintura Alta Larga"></div>
-  <div class="card-body">
-    <p class="titulo">Calça Jeans Pantalona Wide Leg Feminina Cintura Alta Larga</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 63,00</span>
-      <span class="preco-anterior">R$ 109,00</span>
-    </div>
-    <span class="desconto">42% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-4930586574-bermuda-masculina-tactel-short-academia-treino-plus-size-g3-_JM?searchVariation=188145636343" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_782400-MLB113344613004_072026-AB-bermuda-masculina-tactel-short-academia-treino-plus-size-g3.webp" alt="Bermuda Masculina Tactel Short Academia Treino Plus Size G3"></div>
-  <div class="card-body">
-    <p class="titulo">Bermuda Masculina Tactel Short Academia Treino Plus Size G3</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 29,00</span>
-      <span class="preco-anterior">R$ 49,00</span>
-    </div>
-    <span class="desconto">40% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/celular-samsung-galaxy-a17-com-ia-128gb-4gb-ram-cam-de-50mp-tela-de-67-nfc-ip54-preto/p/MLB65114795?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_868127-MLA118013296557_092026-AB.webp" alt="Celular Samsung Galaxy A17 Com Ia, 128gb, 4gb Ram, Câm De 50mp, Tela De 6.7&quot;, Nfc, Ip54 - Preto"></div>
-  <div class="card-body">
-    <p class="titulo">Celular Samsung Galaxy A17 Com Ia, 128gb, 4gb Ram, Câm De 50mp, Tela De 6.7&quot;, Nfc, Ip54 - Preto</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 897,00</span>
-      <span class="preco-anterior">R$ 1499,00</span>
-    </div>
-    <span class="desconto">40% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-5265379346-mala-wilson-viagem-rodinhas-19-rodas-removiveis-10kg-anac-_JM?searchVariation=186786523611" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_888166-MLB113094396999_062026-AB-mala-wilson-viagem-rodinhas-19-rodas-removiveis-10kg-anac.webp" alt="Mala Wilson Viagem Rodinhas 19&#x27; Rodas Removíveis 10kg Anac"></div>
-  <div class="card-body">
-    <p class="titulo">Mala Wilson Viagem Rodinhas 19&#x27; Rodas Removíveis 10kg Anac</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 245,00</span>
-      <span class="preco-anterior">R$ 699,00</span>
-    </div>
-    <span class="desconto">64% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/celular-samsung-galaxy-a07-256gb-8gb-camera-50mp-verde/p/MLB54963045?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_778917-MLA91526601104_092025-AB.webp" alt="Celular Samsung Galaxy A07 256gb 8gb Câmera 50mp Verde"></div>
-  <div class="card-body">
-    <p class="titulo">Celular Samsung Galaxy A07 256gb 8gb Câmera 50mp Verde</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 879,00</span>
-      <span class="preco-anterior">R$ 1799,00</span>
-    </div>
-    <span class="desconto">51% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/testo-essencial-formula-exclusiva-com-feno-grego-boro-arginina-zma-vitamina-b6-60-capsulas-precursor-da-testosterona/p/MLB58582424?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_949131-MLA114764498645_072026-AB.webp" alt="TESTO ESSENCIAL - Fórmula Exclusiva com Feno Grego + Boro + Arginina + ZMA + Vitamina B6 - 60 cápsulas - Precursor da Testosterona"></div>
-  <div class="card-body">
-    <p class="titulo">TESTO ESSENCIAL - Fórmula Exclusiva com Feno Grego + Boro + Arginina + ZMA + Vitamina B6 - 60 cápsulas - Precursor da Testosterona</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 56,00</span>
-      <span class="preco-anterior">R$ 91,00</span>
-    </div>
-    <span class="desconto">38% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/kit-10-pote-de-vidro-marmita-hermetico-370ml-freezer-fitness-rishon/p/MLB66060206?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_605578-MLA113633610823_062026-AB.webp" alt="Kit 10 Pote De Vidro Marmita Hermético 370ml Freezer Fitness Rishon"></div>
-  <div class="card-body">
-    <p class="titulo">Kit 10 Pote De Vidro Marmita Hermético 370ml Freezer Fitness Rishon</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 77,00</span>
-      <span class="preco-anterior">R$ 119,00</span>
-    </div>
-    <span class="desconto">35% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/cadeira-escritorio-ergonomica-genebra-b500-luvinco-cor-preto-com-suporte-lombar-estofado-mesh/p/MLB46220740?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_764756-MLA96570589252_112025-AB.webp" alt="Cadeira Escritório Ergonômica Genebra B500 Luvinco Cor Preto Com Suporte Lombar Estofado Mesh"></div>
-  <div class="card-body">
-    <p class="titulo">Cadeira Escritório Ergonômica Genebra B500 Luvinco Cor Preto Com Suporte Lombar Estofado Mesh</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 473,00</span>
-      <span class="preco-anterior">R$ 906,00</span>
-    </div>
-    <span class="desconto">47% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/chave-de-impacto-parafusadeira-680nm-brushless-98v-2baterias/up/MLBU3907566735?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_743093-MLB116271618555_082026-AB--chave-de-impacto-parafusadeira-680nm-brushless-98v-2baterias.webp" alt="Chave De Impacto Parafusadeira 680nm Brushless 98v 2baterias Preto 127/220v"></div>
-  <div class="card-body">
-    <p class="titulo">Chave De Impacto Parafusadeira 680nm Brushless 98v 2baterias Preto 127/220v</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 162,00</span>
-      <span class="preco-anterior">R$ 399,00</span>
-    </div>
-    <span class="desconto">59% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://click1.mercadolivre.com.br/mclics/clicks/external/MLB/count?a=Sty%2FL%2FEjjSkse6lMdye6j8UVzKFeK5z3yeeNaw4my8crorSw2r70qj9dgeaDlKtL1Tn75u5oSyZnl2CyVjsOhRt3IqLca1it4ZpFxancukkBmrKv9OswtRtV4AIKGekYTP6C9ZchnYeiQ1iP7qhVl3HWnaOzwT3virnlbdkXpiFb0hhcaX%2BbZaKiymmaGZkloM5gIFpYNADifosIVHBzsBQoNjmFGNJUnz81x%2FP%2B3rvJjoUgaWzfDkVbZFAschyiLy2kJjUBMCKgmgooZsBzgXilx4B5r5iTP2XucsMl470kmHC2hJxsR7MolDdzXPwfCNR5mLD8Lxqi5oRyZr7ytIHNgffHSRzAQnvjCJaoiuGwtAjjbvvAFi%2FpNsTrBr8q4RcD8yj%2BRJG5LpVVcdPw%2B1n3BOhKVa90vLsFK5GIISOMFeqscUsboFztgB8Ofr6Ps2BwGcl0mqLLSY3yHLQCr7dILyuvbKa29MjD3aV0NKzjKJMoaAwZvlnz3OL5uzNRe47CQf%2F8tDr6AzNdJIG1u%2Bp5ss4gfQUp%2FLccuO%2B%2B8pNseZgH9%2BLEQUJCDZhAUULYM20%3D&amp;url=https%3A%2F%2Fproduto.mercadolivre.com.br%2FMLB-4810647054-cinta-modeladora-feminina-com-barbatana-redutora-cintura-750-_JM%23searchVariation%3D0%26position%3D8%26search_layout%3Dgrid%26deal_print_id%3Dafdae2aa-200b-4296-8157-f1be99e72cc1%26tracking_id%3De87777cb-5833-41a6-b5d5-c6f65360483c&amp;lm=-867469008" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_749868-MLB117134894049_092026-AB-cinta-modeladora-feminina-com-barbatana-redutora-cintura-750.webp" alt="Cinta Modeladora Feminina Com Barbatana Redutora Cintura 750"></div>
-  <div class="card-body">
-    <p class="titulo">Cinta Modeladora Feminina Com Barbatana Redutora Cintura 750</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 95,00</span>
-      <span class="preco-anterior">R$ 179,00</span>
-    </div>
-    <span class="desconto">46% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-3800842215-camiseta-dry-fit-preta-caveira-unisex-dark-lab-_JM?searchVariation=181250232814" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_706587-MLB115944612831_082026-AB-camiseta-dry-fit-preta-caveira-unisex-dark-lab.webp" alt="Camiseta Dry-fit  Preta Caveira Unisex Dark Lab"></div>
-  <div class="card-body">
-    <p class="titulo">Camiseta Dry-fit  Preta Caveira Unisex Dark Lab</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 29,00</span>
-      <span class="preco-anterior">R$ 69,00</span>
-    </div>
-    <span class="desconto">56% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/strobo-cordao-natal-1600-leds-pisca-flash-50m-prova-dagua-bivolt-branco-quente/p/MLB57814478?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_983056-MLA116660278091_082026-AB.webp" alt="Strobo Cordão Natal 1600 Leds Pisca Flash 50m Prova D&#x27;água Bivolt Branco Quente"></div>
-  <div class="card-body">
-    <p class="titulo">Strobo Cordão Natal 1600 Leds Pisca Flash 50m Prova D&#x27;água Bivolt Branco Quente</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 202,00</span>
-      <span class="preco-anterior">R$ 489,00</span>
-    </div>
-    <span class="desconto">58% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/esteira-ergometrica-eletrica-dobravel-residencial-cardio/up/MLBU4760101286?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_773728-MLB116246249633_082026-AB--esteira-ergometrica-eletrica-dobravel-residencial-cardio.webp" alt="Esteira Ergométrica Elétrica Dobrável Residencial Cardio Preto 127/220v"></div>
-  <div class="card-body">
-    <p class="titulo">Esteira Ergométrica Elétrica Dobrável Residencial Cardio Preto 127/220v</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 615,00</span>
-      <span class="preco-anterior">R$ 1499,00</span>
-    </div>
-    <span class="desconto">58% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://click1.mercadolivre.com.br/mclics/clicks/external/MLB/count?a=CMb4Noc1902cVWNo6lxT7tlzvA%2BkVETev1d0JHrVm08cHw%2B2%2FdAT5lZiWcdwOtII6aKALaQvmofps8MGAP6JDWoBw75wUraK9EcIxhsT0p%2BBAzYGxdD4UhC4D7XcM6CXWZAuedtq4ZVDQFLbb11X5XcXwtpLd0fcw4Io3lP6edOKSH%2FqI6rODaSQY%2Fp%2BO2k4UbUVrN1vnLPutiCRMWxz%2Bc%2BNRPpXBHKRBLqduuOO%2BfAp845CMVPiBTD78q%2F1duStrOSFmo2qEbI88SUTtL4GLSJmRmsPc73IwhYvvDcq1XzIC9JMImY%2BsYXiQs0zRxsfxMPkyWn2YVIK987DYnMEl%2F2Z76LRAQKMefU4Nt0NEvRdoM%2FCVRtalXYTbEoEJ39OEeQZTjgf5hKag7O4mkDRU5rYmNqBgtM2YBaRdly5Iee9BPEB9kYLsLHuWjwZnEHm9CzuyEiI7SYdlNIsCdW6u%2FGB9BKhESplSC%2FPpPdzuLZGF%2Fv%2F%2Brq8hwyZkD8d09zBtEgxv7%2BXK3DsgYYC6ut2RbhAwQof2t3RbP26l30D8%2BK2fTspr5z9VGgqYNSXlHikJYq4Ink%3D&amp;url=https%3A%2F%2Fproduto.mercadolivre.com.br%2FMLB-3676440389-polo-masculina-lacoste-slim-fit-original-_JM%23searchVariation%3D0%26position%3D17%26search_layout%3Dgrid%26deal_print_id%3Dafdae2aa-200b-4296-8157-f1be99e72cc1%26tracking_id%3De87777cb-5833-41a6-b5d5-c6f65360483c&amp;lm=-917884535" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_765079-MLB87929969346_072025-AB-polo-masculina-lacoste-slim-fit-original.webp" alt="Polo Masculina Lacoste Slim Fit - Original"></div>
-  <div class="card-body">
-    <p class="titulo">Polo Masculina Lacoste Slim Fit - Original</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 218,00</span>
-      <span class="preco-anterior">R$ 487,00</span>
-    </div>
-    <span class="desconto">55% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/fone-de-ouvido-sem-fio-huawei-freebuds-pro-5-cancelamento-de-ruido-com-ia-de-motor-duplo-som-ultra-imersivo-chamadas-estaveis-e-nitidas-ip57-ate-38-horas-autonomia-de-bateria-cinza/p/MLB64531693?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_990763-MLA108616683409_032026-AB.webp" alt="Fone de Ouvido Sem Fio HUAWEI FreeBuds Pro 5 Cancelamento de Ruído com IA de Motor Duplo Som Ultra Imersivo Chamadas Estáveis e Nítidas IP57 Até 38 horas Autonomia de Bateria Cinza"></div>
-  <div class="card-body">
-    <p class="titulo">Fone de Ouvido Sem Fio HUAWEI FreeBuds Pro 5 Cancelamento de Ruído com IA de Motor Duplo Som Ultra Imersivo Chamadas Estáveis e Nítidas IP57 Até 38 horas Autonomia de Bateria Cinza</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 759,00</span>
-      <span class="preco-anterior">R$ 1699,00</span>
-    </div>
-    <span class="desconto">55% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/smartphone-samsung-galaxy-a17-5g-128gb-4gb-super-amoled-67-camera-50mp-selfie-13-mp-5000-mah-nfc-dual-sim-recursos-ia-cinza/p/MLB55521828?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_873869-MLA92299394919_092025-AB.webp" alt="Smartphone Samsung Galaxy A17 5g 128gb 4gb Super Amoled 6.7&#x27;&#x27; Câmera 50mp Selfie 13 Mp 5000 Mah Nfc Dual Sim Recursos Ia - Cinza"></div>
-  <div class="card-body">
-    <p class="titulo">Smartphone Samsung Galaxy A17 5g 128gb 4gb Super Amoled 6.7&#x27;&#x27; Câmera 50mp Selfie 13 Mp 5000 Mah Nfc Dual Sim Recursos Ia - Cinza</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 901,00</span>
-      <span class="preco-anterior">R$ 1855,00</span>
-    </div>
-    <span class="desconto">51% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://click1.mercadolivre.com.br/mclics/clicks/external/MLB/count?a=k%2BOsnOtlkqZVTPEj4t9ceaPZd4rCvVcAVZLZoWi8LkT68bzCyWflBd3GFM71v7ZQyN6jQlQq%2FxJKYD2%2B5F1ylAZkZvdxrlokqJmf80%2BOFd%2FQZ8sqWuKsRiOVvKjjoqs61%2FUugm5xYrHwNyWTgkV4hu7r%2Bss6RwHK%2Fkow6j%2FMT0DhC39DNjDUorE5lvNJZHjV%2BLVBM62RHlo1ZL6CY6gA1yoElcvxCFpSESekkbL4DMZuz2ccEcKyOaJarYdhplTD7dxYEcldZtopaf7T%2F1cMwpXMPpRX2TFqMve6iiWTagbYGnTaljnEAOM9CF%2FFd2cwFpLurGszXHPT7YU3jtf%2F3WCe2oK6my6KMUQEuFqmjgtGczfqRKYkMsybq%2BTqVdca0K3LPJDbCJebu%2FRQtcW3CLKYlM8spl55E9y0s1eU88Tzk2XjfiXip4ObfbnnFNRBsP0zxWfUw3nZyMyLeW6zmsJUCZiWVLH2WVlq0%2F2KjgijiF%2B6UwuhcVc%2BdA%2BLJV2J4YSAZTYngKmUDp2wihqkYzOOLS4v5kKBVBtdkn68vdg7jluIINbfrmdw0UoH6pjMlZCCONU%3D&amp;url=https%3A%2F%2Fwww.mercadolivre.com.br%2Ffone-de-ouvido-sem-fio-huawei-freebuds-pro-5-cancelamento-de-ruido-com-ia-de-motor-duplo-som-ultra-imersivo-chamadas-estaveis-e-nitidas-ip57-ate-38-horas-autonomia-de-bateria-areia%2Fp%2FMLB64531689%23searchVariation%3DMLB64531689%26position%3D7%26search_layout%3Dgrid%26deal_print_id%3Dafdae2aa-200b-4296-8157-f1be99e72cc1%26tracking_id%3De87777cb-5833-41a6-b5d5-c6f65360483c&amp;lm=-1381875038" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_894904-MLA108616717307_032026-AB.webp" alt="Fone de Ouvido Sem Fio HUAWEI FreeBuds Pro 5 Cancelamento de Ruído com IA de Motor Duplo Som Ultra Imersivo Chamadas Estáveis e Nítidas IP57 Até 38 horas Autonomia de Bateria Areia"></div>
-  <div class="card-body">
-    <p class="titulo">Fone de Ouvido Sem Fio HUAWEI FreeBuds Pro 5 Cancelamento de Ruído com IA de Motor Duplo Som Ultra Imersivo Chamadas Estáveis e Nítidas IP57 Até 38 horas Autonomia de Bateria Areia</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 784,00</span>
-      <span class="preco-anterior">R$ 1699,00</span>
-    </div>
-    <span class="desconto">53% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-3582464273-kit-10-cueca-boxer-sem-costura-microfibra-selene-masculina-_JM?searchVariation=179789681090" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_998477-MLB75178930349_032024-AB-kit-10-cueca-boxer-sem-costura-microfibra-selene-masculina.webp" alt="Kit 10 Cueca Boxer Sem Costura Microfibra Selene Masculina"></div>
-  <div class="card-body">
-    <p class="titulo">Kit 10 Cueca Boxer Sem Costura Microfibra Selene Masculina</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 142,00</span>
-      <span class="preco-anterior">R$ 286,00</span>
-    </div>
-    <span class="desconto">50% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/smartwatch-huawei-watch-fit-5-amoled-de-182-design-leve-mini-treino-bateria-com-ate-10-dias-64-gb-gerenciamento-avancado-da-saude-monitor-do-sono-spo2-gps-compativel-com-ios-e-android-branco/p/MLB67714382?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_888241-MLA110593054037_042026-AB.webp" alt="Smartwatch HUAWEI WATCH FIT 5 AMOLED de 182&quot; Design Leve Mini Treino Bateria com Até 10 Dias 64 GB Gerenciamento Avançado da Saúde Monitor do Sono SpO2 GPS Compatível com iOS e Android Branco"></div>
-  <div class="card-body">
-    <p class="titulo">Smartwatch HUAWEI WATCH FIT 5 AMOLED de 182&quot; Design Leve Mini Treino Bateria com Até 10 Dias 64 GB Gerenciamento Avançado da Saúde Monitor do Sono SpO2 GPS Compatível com iOS e Android Branco</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 799,00</span>
-      <span class="preco-anterior">R$ 1499,00</span>
-    </div>
-    <span class="desconto">46% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-5599269086-jogo-toalhas-banho-e-rosto-grossas-macias-100-algodo-4pcs-_JM?searchVariation=184812466714" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_826474-MLB113641401862_072026-AB-jogo-toalhas-banho-e-rosto-grossas-macias-100-algodo-4pcs.webp" alt="Jogo Toalhas Banho E Rosto Grossas Macias 100% Algodão 4pçs"></div>
-  <div class="card-body">
-    <p class="titulo">Jogo Toalhas Banho E Rosto Grossas Macias 100% Algodão 4pçs</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 84,00</span>
-      <span class="preco-anterior">R$ 149,00</span>
-    </div>
-    <span class="desconto">43% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/smartphone-samsung-galaxy-a36-5g-128gb-6gb-ram-camera-tripla-de-ate-50mp-selfie-de-12mp-ip67-super-amoled-67-nfc-recursos-ai-android-e-seguranca-snapdragon-branco/p/MLB47109375?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_968548-MLA99944961199_112025-AB.webp" alt="Smartphone Samsung Galaxy A36 5G 128GB 6GB RAM Câmera Tripla de até 50MP Selfie de 12MP IP67 Super AMOLED 6.7&#x27;&#x27; NFC Recursos AI Android e Segurança Snapdragon - Branco"></div>
-  <div class="card-body">
-    <p class="titulo">Smartphone Samsung Galaxy A36 5G 128GB 6GB RAM Câmera Tripla de até 50MP Selfie de 12MP IP67 Super AMOLED 6.7&#x27;&#x27; NFC Recursos AI Android e Segurança Snapdragon - Branco</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 1268,00</span>
-      <span class="preco-anterior">R$ 2212,00</span>
-    </div>
-    <span class="desconto">42% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/smartphone-samsung-galaxy-a36-5g-128gb-6gb-ram-camera-tripla-de-ate-50mp-selfie-de-12mp-ip67-super-amoled-67-nfc-recursos-ai-android-e-seguranca-snapdragon-branco/p/MLB65952157?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_944288-MLA116511342948_092026-AB.webp" alt="Smartphone Samsung Galaxy A36 5G 128GB 6GB RAM Câmera Tripla de até 50MP Selfie de 12MP IP67 Super AMOLED 6.7&#x27;&#x27; NFC Recursos AI Android e Segurança Snapdragon - Branco"></div>
-  <div class="card-body">
-    <p class="titulo">Smartphone Samsung Galaxy A36 5G 128GB 6GB RAM Câmera Tripla de até 50MP Selfie de 12MP IP67 Super AMOLED 6.7&#x27;&#x27; NFC Recursos AI Android e Segurança Snapdragon - Branco</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 1297,00</span>
-      <span class="preco-anterior">R$ 2212,00</span>
-    </div>
-    <span class="desconto">41% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/smart-tv-4k-50-lg-nano-uhd-ai-nu850-2026-processador-7-ger9-hdr10-xbox-bluetooth-wi-fi-ai-search-google-gemini-webos-26-50nu850bpsa/p/MLB76779956?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_756409-MLA115252629948_082026-AB.webp" alt="Smart TV 4K 50&quot; LG NANO UHD AI NU850 2026 Processador α7 Ger9 HDR10 Xbox Bluetooth Wi-Fi AI Search Google Gemini webOS 26 - 50NU850BPSA"></div>
-  <div class="card-body">
-    <p class="titulo">Smart TV 4K 50&quot; LG NANO UHD AI NU850 2026 Processador α7 Ger9 HDR10 Xbox Bluetooth Wi-Fi AI Search Google Gemini webOS 26 - 50NU850BPSA</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 2276,00</span>
-      <span class="preco-anterior">R$ 3899,00</span>
-    </div>
-    <span class="desconto">41% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/secador-de-cabelos-philcopsc3500-4-em-1dobravelmotorbldc-prateado/p/MLB49652036?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_723697-MLA115636981336_092026-AB.webp" alt="Secador De Cabelos Philco psc3500 4 Em 1 dobrável motor bldc Prateado"></div>
-  <div class="card-body">
-    <p class="titulo">Secador De Cabelos Philco psc3500 4 Em 1 dobrável motor bldc Prateado</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 439,00</span>
-      <span class="preco-anterior">R$ 599,00</span>
-    </div>
-    <span class="desconto">26% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://click1.mercadolivre.com.br/mclics/clicks/external/MLB/count?a=yqbAHGkbJb3H2ONS9vavOeWa3y5XjqxiQLKAtUUqq79CCwpM1c9XOTF2OfUWn%2FsqbyYY5kLW5RBPTGJ%2FKoFusrP5gmD9VQhcZrScrC05bdWI1oJj5GdxNMPcyE%2FC5WqFlxRL9d4MIr6DIesVOL%2FKSjXYHL6R2vJJpB%2FexjiRS%2BR5WZic9xW4vj4oDJ%2FH7xcRcjTUE6KRhpBnfQXcEniHDLLL2yGGkMXzWge7whb56vu50f4K3s2uZDsFjCTO5XEU9EChuvWhkc3KbyaLiAHjCnqk9nfMqQxDKAo26a4VXxUTqrwwGAeHj3p2%2BqLNUnUCSfjR6wEe1%2B%2FGfeK4iLsc4dKMh87zHhcsSYDLBfC%2B%2BEc0PrBb96eQHJA%2FEaUBepN%2BrhZvyWVsqXPzP7ttQx2JyVEF3UUBNXHZIm1BMZJBPtsj2hicDoJ%2Bidek8VJv7BMyoosomKEet1roakInQwdQHWo2jXqOdkiqf5C7ve8W5ZwJF7sGIgUV4daqaPOaSgGl4sq9%2FeUqWcUj8w95BgoXQcBCZZD8%2F3lPhYcghOSCgihmIt23ya3xWdH57jbKzH7lD2Q7188%3D&amp;url=https%3A%2F%2Fproduto.mercadolivre.com.br%2FMLB-4689433023-kit-6-cuecas-boxer-sem-costura-polo-wear-microfibra-_JM%23searchVariation%3D0%26position%3D9%26search_layout%3Dgrid%26deal_print_id%3Dafdae2aa-200b-4296-8157-f1be99e72cc1%26tracking_id%3De87777cb-5833-41a6-b5d5-c6f65360483c&amp;lm=-1499357567" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_907119-MLB111848616249_052026-AB-kit-6-cuecas-boxer-sem-costura-polo-wear-microfibra.webp" alt="Kit 6 Cuecas Boxer Sem Costura Polo Wear Microfibra"></div>
-  <div class="card-body">
-    <p class="titulo">Kit 6 Cuecas Boxer Sem Costura Polo Wear Microfibra</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 62,00</span>
-      <span class="preco-anterior">R$ 99,00</span>
-    </div>
-    <span class="desconto">37% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/smart-tv-32-philco-p32vik-roku-led-dolby-audio-hdr-wi-fi-110220v/p/MLB63036814?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_904550-MLA100972962937_122025-AB.webp" alt="Smart Tv 32 Philco P32vik Roku Led Dolby Audio Hdr Wi-fi 110/220v"></div>
-  <div class="card-body">
-    <p class="titulo">Smart Tv 32 Philco P32vik Roku Led Dolby Audio Hdr Wi-fi 110/220v</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 1031,00</span>
-      <span class="preco-anterior">R$ 1499,00</span>
-    </div>
-    <span class="desconto">31% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/fritadeira-air-fryer-philco-16-litros-paf16c-preto-220v/p/MLB66895633?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_841702-MLA110401871238_052026-AB.webp" alt="Fritadeira Air Fryer Philco 16 Litros Paf16c Preto 220v"></div>
-  <div class="card-body">
-    <p class="titulo">Fritadeira Air Fryer Philco 16 Litros Paf16c Preto 220v</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 449,00</span>
-      <span class="preco-anterior">R$ 623,00</span>
-    </div>
-    <span class="desconto">28% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/smart-tv-4k-50-lg-qned73-portal-de-games-processador-ai-7-ger8-4k-super-upscaling-google-cast-integrado-controle-ai-magic-webos-25-modo-esportes-alerta-de-esportes/p/MLB65916422?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_736986-MLA110508533913_042026-AB.webp" alt="Smart TV 4K 50&quot; LG QNED73 Portal de Games Processador AI α7 Ger8 4K Super Upscaling Google Cast Integrado Controle AI Magic WebOS 25 Modo Esportes Alerta de Esportes"></div>
-  <div class="card-body">
-    <p class="titulo">Smart TV 4K 50&quot; LG QNED73 Portal de Games Processador AI α7 Ger8 4K Super Upscaling Google Cast Integrado Controle AI Magic WebOS 25 Modo Esportes Alerta de Esportes</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 2424,00</span>
-      <span class="preco-anterior">R$ 3399,00</span>
-    </div>
-    <span class="desconto">28% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://click1.mercadolivre.com.br/mclics/clicks/external/MLB/count?a=HaC%2B8XgIZ%2FNLtRDjESdd%2B4T968m5YSRF09ORXZWZrFlqX5uPw1cXU9wMNJokpZZ7Gi2wE5Yc2ipffiqeq5C%2Fo0SMKedxc3QBoInQhne4nP7InKLUtdiOS6tYS0UcGi6rqA%2BI9KR28qYVnJl3crcahG4biJYy1DesmLk1CTeM3uKfwcANJFnPNnVHyECUtwgzdBQpH8WpDpY7%2FYbSyAVXTRLQCcJMZ8uyRrE1HEr8tBLT33g8Nzyhx6Pka5%2BL5jnp9UhKzhyeTzIWYP%2BOOzFgZGqFjhBpZCKBSS4f3pn13OoIYcXgoWZvu7DcKrPfRak5yJH5ttUNeuSAI8qq9imHTbRtTQe1GE%2FkiVB0PDSgcRnElcTzh5Dd2M6c9u89eD4ej4lN07YqbZTDzrEjinyCB%2BizMgfCTjUmHp1SvNSogOrGRpyOanETXnJl4%2BmF0d8yWJQbMsoIhZcAj4O2WSDVrcSiOHr1CeoEBqXoPVtUp4%2BjdCoh%2B39REMj13JjaGFc4wDZQ%2FSg4%2Bp%2F2NnA2ae9lUINyxE2vwibLSFjzsXH5lnTlSGk3ceYKcop0gajXNB%2FeocjgrzJJ&amp;url=https%3A%2F%2Fwww.mercadolivre.com.br%2Far-condicionado-lg-dual-inverter-ai-voice-9000-btu-frio%2Fp%2FMLB77105904%23searchVariation%3DMLB77105904%26position%3D18%26search_layout%3Dgrid%26deal_print_id%3Dafdae2aa-200b-4296-8157-f1be99e72cc1%26tracking_id%3De87777cb-5833-41a6-b5d5-c6f65360483c&amp;lm=814109798" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_959208-MLA114668635068_082026-AB.webp" alt="Ar-condicionado LG Dual Inverter Ai Voice 9.000 Btu Frio"></div>
-  <div class="card-body">
-    <p class="titulo">Ar-condicionado LG Dual Inverter Ai Voice 9.000 Btu Frio</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 2120,00</span>
-      <span class="preco-anterior">R$ 2999,00</span>
-    </div>
-    <span class="desconto">29% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/camera-de-seguranca-wi-fi-a28b-4k-dupla-lente-visao-noturna-colorida-full-hd-externa-prova-dagua-ip66-sensor-movimento-icsee-duoseg/p/MLB46329411?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_937285-MLA115405028137_072026-AB.webp" alt="Câmera de Segurança Wi-Fi A28B 4K Dupla Lente Visão Noturna Colorida Full Hd Externa Prova D&#x27;água Ip66 Sensor Movimento iCSee DUOSEG"></div>
-  <div class="card-body">
-    <p class="titulo">Câmera de Segurança Wi-Fi A28B 4K Dupla Lente Visão Noturna Colorida Full Hd Externa Prova D&#x27;água Ip66 Sensor Movimento iCSee DUOSEG</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 128,00</span>
-      <span class="preco-anterior">R$ 169,00</span>
-    </div>
-    <span class="desconto">24% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://produto.mercadolivre.com.br/MLB-4202911771-sofa-2-lugares-200m-retratil-e-reclinavel-milano-bom-pastor-_JM?searchVariation=190668804141" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_908689-MLB91907933450_092025-AB-sofa-2-lugares-200m-retratil-e-reclinavel-milano-bom-pastor.webp" alt="Sofá 2 Lugares 2,00m Retrátil E Reclinável Milano Bom Pastor"></div>
-  <div class="card-body">
-    <p class="titulo">Sofá 2 Lugares 2,00m Retrátil E Reclinável Milano Bom Pastor</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 1519,00</span>
-      <span class="preco-anterior">R$ 1999,00</span>
-    </div>
-    <span class="desconto">24% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/perfume-club-de-nuit-intense-da-armaf-edt-105ml-masculino/up/MLBU3782392794?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_887864-MLB108264754941_032026-AB--perfume-club-de-nuit-intense-da-armaf-edt-105ml-masculino.webp" alt="Perfume Club De Nuit Intense Da Armaf Edt 105ml Masculino"></div>
-  <div class="card-body">
-    <p class="titulo">Perfume Club De Nuit Intense Da Armaf Edt 105ml Masculino</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 208,00</span>
-      <span class="preco-anterior">R$ 265,00</span>
-    </div>
-    <span class="desconto">21% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/smart-tv-samsung-43-ls43f6000fgxzd-full-hd-led-110v220v/p/MLB63777677?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_850374-MLA103344560695_012026-AB.webp" alt="Smart Tv Samsung 43 Ls43f6000fgxzd Full Hd Led 110v/220v"></div>
-  <div class="card-body">
-    <p class="titulo">Smart Tv Samsung 43 Ls43f6000fgxzd Full Hd Led 110v/220v</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 1355,00</span>
-      <span class="preco-anterior">R$ 1699,00</span>
-    </div>
-    <span class="desconto">20% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/latex-acrilica-tinta-coral-anti-mofo-branco-18l-coralar-branco-fosco/p/MLB38477725?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_807241-MLA99565665626_122025-AB.webp" alt="Latex acrílica tinta coral anti mofo branco 18l coralar branco fosco"></div>
-  <div class="card-body">
-    <p class="titulo">Latex acrílica tinta coral anti mofo branco 18l coralar branco fosco</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 239,00</span>
-      <span class="preco-anterior">R$ 289,00</span>
-    </div>
-    <span class="desconto">17% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/ar-cond-split-inverter-midea-ia-ecomaster-9k-btus-frio-42ezvca09m5/p/MLB50748596?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_938155-MLA99501599674_112025-AB.webp" alt="Ar Cond Split Inverter Midea Ia Ecomaster 9k Btus Frio 42EZVCA09M5"></div>
-  <div class="card-body">
-    <p class="titulo">Ar Cond Split Inverter Midea Ia Ecomaster 9k Btus Frio 42EZVCA09M5</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 2266,00</span>
-      
-    </div>
-    
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://www.mercadolivre.com.br/ar-condicionado-12000-btus-inverter-ai-ecomaster-frio-branco-220v/p/MLB53367442?pdp_filters=deal%3AMLB779362-1" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://http2.mlstatic.com/D_Q_NP_2X_612701-MLA99942070133_112025-AB.webp" alt="Ar Condicionado 12.000 Btus Inverter Ai Ecomaster Frio Branco 220v"></div>
-  <div class="card-body">
-    <p class="titulo">Ar Condicionado 12.000 Btus Inverter Ai Ecomaster Frio Branco 220v</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 2399,00</span>
-      
-    </div>
-    
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://s.shopee.com.br/905RU0QDdj" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://down-zl-br.img.susercontent.com/br-11134207-820lm-mohh8j4tjpc0e3.webp" alt="Percarbonato 100% Puro Tira Manchas Roupas Brancas e Coloridas"></div>
-  <div class="card-body">
-    <p class="titulo">Percarbonato 100% Puro Tira Manchas Roupas Brancas e Coloridas</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 17,90</span>
-      <span class="preco-anterior">R$ 59,67</span>
-    </div>
-    <span class="desconto">70% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://s.shopee.com.br/1AclV6brx" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://down-zl-br.img.susercontent.com/br-11134207-820me-mneaqb9op8n481.webp" alt="Utensílios Silicone Cozinha Antiaderente Fácil Limpeza Alta Resistência"></div>
-  <div class="card-body">
-    <p class="titulo">Utensílios Silicone Cozinha Antiaderente Fácil Limpeza Alta Resistência</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 18,61</span>
-      <span class="preco-anterior">R$ 88,62</span>
-    </div>
-    <span class="desconto">79% OFF</span>
-    <span class="btn">Ver oferta</span>
-  </div>
-</a>
-
-
-<a class="card" href="https://s.shopee.com.br/9V1i4wbJgL" target="_blank" rel="noopener noreferrer sponsored">
-  <div class="card-img"><img src="https://down-zl-br.img.susercontent.com/br-11134207-820lq-mlhna1a2xeys44.webp" alt="Kits de Meias Soquete Unissex Premium Masculina e Feminina"></div>
-  <div class="card-body">
-    <p class="titulo">Kits de Meias Soquete Unissex Premium Masculina e Feminina</p>
-    <div class="precos">
-      <span class="preco-atual">R$ 10,99</span>
-      <span class="preco-anterior">R$ 10,99</span>
-    </div>
-    
+    <span class="desconto">54% OFF</span>
     <span class="btn">Ver oferta</span>
   </div>
 </a>
 
 </div>
+<p class="vazio" id="vazio">Nenhum achadinho postado nessa data.</p>
 <footer>
-  Atualizado automaticamente todos os dias &middot; Alguns links podem gerar comissão para @achadinhosdoterra
+  Só aparecem aqui produtos já postados no feed, Reels ou Stories &middot; Alguns links podem gerar comissão para @achadinhosdoterra
 </footer>
+<script>
+function filtrarPorData(data) {
+  var cards = document.querySelectorAll('#grid .card');
+  var visiveis = 0;
+  cards.forEach(function(card) {
+    if (data === 'todas' || card.dataset.data === data) {
+      card.classList.remove('oculto');
+      visiveis++;
+    } else {
+      card.classList.add('oculto');
+    }
+  });
+  document.getElementById('vazio').style.display = visiveis === 0 ? 'block' : 'none';
+}
+</script>
 </body>
 </html>
