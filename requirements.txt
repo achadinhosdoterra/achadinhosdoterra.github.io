@@ -3,3 +3,4 @@ lxml
 moviepy
 edge-tts
 imageio-ffmpeg
+Pillow

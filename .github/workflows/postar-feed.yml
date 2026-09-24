@@ -1,0 +1,41 @@
+name: Postar no feed automaticamente
+
+on:
+  schedule:
+    - cron: "0 12,16,20,23 * * *" # 9h, 13h, 17h, 20h America/Sao_Paulo (UTC-3)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  postar-feed:
+    runs-on: ubuntu-latest
+    env:
+      IG_APP_ID: ${{ secrets.IG_APP_ID }}
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Publicar proximo produto da fila no feed
+        run: python publicar_automatico.py --tipo=feed --publicar
+
+      - name: Regenerar site
+        run: python gerar_site.py
+
+      - name: Commit e push
+        run: |
+          git config user.name "Achadinhos Bot"
+          git config user.email "achadinhos@achadinhosdoterra.local"
+          git add publicados.csv docs/index.html
+          git diff --cached --quiet && echo "Sem mudancas" || git commit -m "Post automatico no feed - $(date +'%d/%m/%Y %H:%M')"
+          git push

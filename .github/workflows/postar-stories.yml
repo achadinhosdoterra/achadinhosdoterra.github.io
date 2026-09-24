@@ -1,0 +1,56 @@
+name: Postar no story automaticamente
+
+on:
+  schedule:
+    - cron: "0 12,14,16,18,20,22,0,2 * * *" # 9h,11h,13h,15h,17h,19h,21h,23h America/Sao_Paulo (UTC-3)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  postar-story:
+    runs-on: ubuntu-latest
+    env:
+      IG_APP_ID: ${{ secrets.IG_APP_ID }}
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Gerar imagem do story
+        run: python publicar_automatico.py --tipo=story --preparar
+
+      - name: Commit e push da imagem gerada
+        run: |
+          git config user.name "Achadinhos Bot"
+          git config user.email "achadinhos@achadinhosdoterra.local"
+          git add stories_geradas
+          git diff --cached --quiet && echo "Sem imagem nova" && exit 0
+          git commit -m "Gera imagem de story - $(date +'%d/%m/%Y %H:%M')"
+          git push
+
+      - name: Aguardar propagacao do arquivo publico
+        run: sleep 20
+
+      - name: Publicar story
+        run: python publicar_automatico.py --tipo=story --publicar
+
+      - name: Regenerar site
+        run: python gerar_site.py
+
+      - name: Commit e push do registro
+        run: |
+          git config user.name "Achadinhos Bot"
+          git config user.email "achadinhos@achadinhosdoterra.local"
+          git add publicados.csv docs/index.html
+          git diff --cached --quiet && echo "Sem mudancas" || git commit -m "Post automatico no story - $(date +'%d/%m/%Y %H:%M')"
+          git push

@@ -1,5 +1,6 @@
 import csv
 import json
+import os
 import sys
 import time
 import urllib.error
@@ -27,15 +28,20 @@ PUBLICADOS_CAMPOS = [
 ]
 
 
+CHAVES_ENV = ["IG_APP_ID", "IG_USER_ID", "IG_ACCESS_TOKEN", "IG_APP_SECRET"]
+
+
 def load_env():
-    env = {}
-    with ENV_PATH.open() as f:
-        for line in f:
-            line = line.strip()
-            if line and "=" in line:
-                k, v = line.split("=", 1)
-                env[k] = v
-    return env
+    if ENV_PATH.exists():
+        env = {}
+        with ENV_PATH.open() as f:
+            for line in f:
+                line = line.strip()
+                if line and "=" in line:
+                    k, v = line.split("=", 1)
+                    env[k] = v
+        return env
+    return {k: os.environ[k] for k in CHAVES_ENV if k in os.environ}
 
 
 def graph_post(path, **params):
