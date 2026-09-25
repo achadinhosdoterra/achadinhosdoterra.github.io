@@ -8,13 +8,14 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from gerar_imagem_story import gerar_imagem_story, normalizar_imagens_feed
 from postar_instagram import load_env, publicar_feed, publicar_story
-from postar_telegram import publicar_telegram
+from postar_telegram import avisar_fila_vazia, publicar_telegram
 
 FILA_PATH = Path(__file__).parent / "fila.csv"
 PUBLICADOS_PATH = Path(__file__).parent / "publicados.csv"
 TEMP_PATH = Path(__file__).parent / "temp_video" / "post_atual.json"
 IMAGENS_DIR = Path(__file__).parent / "imagens_geradas"
 STORIES_DIR = Path(__file__).parent / "stories_geradas"
+MARCADOR_FILA_VAZIA = Path(__file__).parent / ".aviso_fila_vazia"
 
 REPO = "achadinhosdoterra/achadinhosdoterra.github.io"
 MAX_STORIES_POR_PRODUTO = 2
@@ -73,7 +74,16 @@ def preparar(tipo):
     produto = escolher_para_feed() if tipo == "feed" else escolher_para_story()
     if not produto:
         print(f"Fila vazia: nenhum produto disponivel para {tipo}. Abastecer fila.csv.")
+        if tipo == "feed":
+            if not MARCADOR_FILA_VAZIA.exists():
+                avisar_fila_vazia(load_env())
+                MARCADOR_FILA_VAZIA.write_text("aviso enviado")
+            else:
+                print("(aviso ja enviado anteriormente, nao vou repetir)")
         return
+
+    if MARCADOR_FILA_VAZIA.exists():
+        MARCADOR_FILA_VAZIA.unlink()
 
     base = Path(__file__).parent
     TEMP_PATH.parent.mkdir(parents=True, exist_ok=True)

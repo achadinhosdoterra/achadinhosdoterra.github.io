@@ -30,6 +30,19 @@ def _preco_str(valor):
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
+def avisar_fila_vazia(env):
+    telegram_post(
+        env,
+        "sendMessage",
+        chat_id=env["TELEGRAM_ADMIN_CHAT_ID"],
+        text=(
+            "⚠️ A fila de produtos (fila.csv) acabou!\n\n"
+            "Manda mais links de produto da Shopee que eu adiciono."
+        ),
+    )
+    print("Aviso de fila vazia enviado ao admin.")
+
+
 def publicar_telegram(env, produto, link_afiliado, publicar=False):
     imagens = _lista_imagens(produto)
     caption = (

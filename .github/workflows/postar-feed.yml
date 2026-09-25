@@ -18,6 +18,7 @@ jobs:
       IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
+      TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -31,12 +32,13 @@ jobs:
       - name: Gerar imagem hospedada do produto
         run: python publicar_automatico.py --tipo=feed --preparar
 
-      - name: Commit e push da imagem gerada
+      - name: Commit e push da imagem gerada (ou aviso de fila vazia)
         run: |
           git config user.name "Achadinhos Bot"
           git config user.email "achadinhos@achadinhosdoterra.local"
           git add imagens_geradas
-          git diff --cached --quiet && echo "Sem imagem nova" && exit 0
+          [ -f .aviso_fila_vazia ] && git add .aviso_fila_vazia
+          git diff --cached --quiet && echo "Sem mudancas" && exit 0
           git commit -m "Gera imagem de feed - $(date +'%d/%m/%Y %H:%M')"
           git push
 
