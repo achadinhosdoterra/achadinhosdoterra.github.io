@@ -8,6 +8,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from gerar_imagem_story import gerar_imagem_story, normalizar_imagens_feed
 from postar_instagram import load_env, publicar_feed, publicar_story
+from postar_telegram import publicar_telegram
 
 FILA_PATH = Path(__file__).parent / "fila.csv"
 PUBLICADOS_PATH = Path(__file__).parent / "publicados.csv"
@@ -98,7 +99,8 @@ def publicar_preparado(publicar):
     with TEMP_PATH.open(encoding="utf-8") as f:
         dados = json.load(f)
 
-    produto = dict(dados["produto"])
+    produto_original = dict(dados["produto"])
+    produto = dict(produto_original)
     produto["imagens"] = [
         f"https://raw.githubusercontent.com/{REPO}/main/{rel}" for rel in dados["imagens_geradas"]
     ]
@@ -106,6 +108,7 @@ def publicar_preparado(publicar):
     env = load_env()
     if dados["tipo"] == "feed":
         publicar_feed(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
+        publicar_telegram(env, produto_original, link_afiliado=produto_original["link_afiliado"], publicar=publicar)
     else:
         publicar_story(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
 

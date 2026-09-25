@@ -28,7 +28,14 @@ PUBLICADOS_CAMPOS = [
 ]
 
 
-CHAVES_ENV = ["IG_APP_ID", "IG_USER_ID", "IG_ACCESS_TOKEN", "IG_APP_SECRET"]
+CHAVES_ENV = [
+    "IG_APP_ID",
+    "IG_USER_ID",
+    "IG_ACCESS_TOKEN",
+    "IG_APP_SECRET",
+    "TELEGRAM_BOT_TOKEN",
+    "TELEGRAM_CHANNEL",
+]
 
 
 def load_env():
