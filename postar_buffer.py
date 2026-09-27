@@ -49,7 +49,7 @@ def publicar_tiktok(env, produto, link_afiliado, publicar=False):
     texto = (
         f"{produto['titulo']} 👀\n\n"
         f"💰 {_preco_str(produto['preco_atual'])}\n\n"
-        f"🔗 Link: {link_afiliado}\n\n"
+        f"🔗 Link na bio!\n\n"
         f"#achadinhos #achadinhosdoterra #promocao"
     )
     print(f"Video (do anuncio): {video_url}")
