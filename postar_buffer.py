@@ -26,13 +26,6 @@ def buffer_graphql(env, query):
     return resultado["data"]
 
 
-def _lista_imagens(produto):
-    imagens = produto.get("imagens") or produto.get("imagem")
-    if isinstance(imagens, str):
-        imagens = imagens.split("|")
-    return [i for i in imagens if i]
-
-
 def _preco_str(valor):
     valor = float(valor)
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -44,20 +37,22 @@ def _escapar(texto):
 
 def publicar_tiktok(env, produto, link_afiliado, publicar=False):
     video_url = produto.get("video_url")
+
+    print("=== PREVIA DO POST (TIKTOK via Buffer) ===")
+    print(f"Produto: {produto['titulo']}")
+
+    if not video_url:
+        print("Sem video real do anuncio disponivel - TikTok exige video, pulando este produto.")
+        print("=======================")
+        return
+
     texto = (
         f"{produto['titulo']} 👀\n\n"
         f"💰 {_preco_str(produto['preco_atual'])}\n\n"
         f"🔗 Link: {link_afiliado}\n\n"
         f"#achadinhos #achadinhosdoterra #promocao"
     )
-
-    print("=== PREVIA DO POST (TIKTOK via Buffer) ===")
-    print(f"Produto: {produto['titulo']}")
-    if video_url:
-        print(f"Video (do anuncio): {video_url}")
-    else:
-        imagens = _lista_imagens(produto)[:10]
-        print(f"Sem video disponivel, usando fotos ({len(imagens)}): {imagens}")
+    print(f"Video (do anuncio): {video_url}")
     print("Texto:")
     print(texto)
     print("=======================")
@@ -66,11 +61,7 @@ def publicar_tiktok(env, produto, link_afiliado, publicar=False):
         print("\n(modo teste: nada foi publicado. Rode com --publicar para postar de verdade)")
         return
 
-    if video_url:
-        assets = f'{{video: {{url: "{_escapar(video_url)}"}}}}'
-    else:
-        imagens = _lista_imagens(produto)[:10]
-        assets = ", ".join(f'{{image: {{url: "{_escapar(url)}"}}}}' for url in imagens)
+    assets = f'{{video: {{url: "{_escapar(video_url)}"}}}}'
     query = f"""
     mutation {{
       createPost(input: {{
