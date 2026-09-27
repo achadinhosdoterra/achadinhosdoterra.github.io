@@ -9,6 +9,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 from gerar_imagem_story import gerar_imagem_story, normalizar_imagens_feed
 from postar_instagram import load_env, publicar_feed, publicar_story
 from postar_telegram import avisar_fila_vazia, publicar_telegram
+from postar_buffer import publicar_tiktok
 
 FILA_PATH = Path(__file__).parent / "fila.csv"
 PUBLICADOS_PATH = Path(__file__).parent / "publicados.csv"
@@ -119,6 +120,7 @@ def publicar_preparado(publicar):
     if dados["tipo"] == "feed":
         publicar_feed(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
         publicar_telegram(env, produto_original, link_afiliado=produto_original["link_afiliado"], publicar=publicar)
+        publicar_tiktok(env, produto, link_afiliado=produto["link_afiliado"], publicar=publicar)
     else:
         publicar_story(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
 
