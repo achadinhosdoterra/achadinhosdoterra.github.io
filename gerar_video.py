@@ -107,7 +107,14 @@ def gerar_video(produto, output_dir, nome_base):
     TEXTO_TOPO = IMG_TOPO + IMG_MAX_H + 40
 
     textos_overlay = [
-        TextClip(text=preco_txt, font_size=90, color="#ff6b35", stroke_color="black", stroke_width=3)
+        TextClip(
+            text=preco_txt,
+            font_size=90,
+            color="#ff6b35",
+            stroke_color="black",
+            stroke_width=3,
+            margin=(20, 20),
+        )
         .with_duration(duracao)
         .with_position(("center", TEXTO_TOPO))
     ]
@@ -115,9 +122,16 @@ def gerar_video(produto, output_dir, nome_base):
     if desconto not in ("0", ""):
         desconto_txt = f"{desconto}% OFF"
         textos_overlay.append(
-            TextClip(text=desconto_txt, font_size=55, color="white", stroke_color="black", stroke_width=2)
+            TextClip(
+                text=desconto_txt,
+                font_size=55,
+                color="white",
+                stroke_color="black",
+                stroke_width=2,
+                margin=(20, 20),
+            )
             .with_duration(duracao)
-            .with_position(("center", TEXTO_TOPO + 130))
+            .with_position(("center", TEXTO_TOPO + 140))
         )
 
     video = CompositeVideoClip([fundo, *clipes_imagens, *textos_overlay], size=(W, H))
