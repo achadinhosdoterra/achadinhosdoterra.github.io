@@ -81,19 +81,22 @@ def gerar_video(produto, output_dir, nome_base):
 
     fundo = ColorClip(size=(W, H), color=(15, 17, 21)).with_duration(duracao)
 
+    IMG_TOPO = 60
+    IMG_MAX_W, IMG_MAX_H = W - 100, 1150
+
     n = len(caminhos_imagens)
     fatia = duracao / n
     clipes_imagens = []
     for i, caminho in enumerate(caminhos_imagens):
         inicio = i * fatia
         img_probe = ImageClip(str(caminho))
-        escala = min(W / img_probe.w, H / img_probe.h) * 0.85
+        escala = min(IMG_MAX_W / img_probe.w, IMG_MAX_H / img_probe.h)
 
         clip = (
             ImageClip(str(caminho))
             .with_duration(fatia)
             .resized(escala)
-            .with_position("center")
+            .with_position(("center", IMG_TOPO))
             .with_start(inicio)
         )
         clipes_imagens.append(clip)
@@ -101,34 +104,21 @@ def gerar_video(produto, output_dir, nome_base):
     preco_txt = f"R$ {float(produto['preco_atual']):.2f}".replace(".", ",")
     desconto = str(produto.get("desconto_pct", "0"))
 
+    TEXTO_TOPO = IMG_TOPO + IMG_MAX_H + 40
+
     textos_overlay = [
         TextClip(text=preco_txt, font_size=90, color="#ff6b35", stroke_color="black", stroke_width=3)
         .with_duration(duracao)
-        .with_position(("center", int(H * 0.72)))
+        .with_position(("center", TEXTO_TOPO))
     ]
 
-    pos_cta = int(H * 0.80)
     if desconto not in ("0", ""):
         desconto_txt = f"{desconto}% OFF"
         textos_overlay.append(
             TextClip(text=desconto_txt, font_size=55, color="white", stroke_color="black", stroke_width=2)
             .with_duration(duracao)
-            .with_position(("center", int(H * 0.80)))
+            .with_position(("center", TEXTO_TOPO + 130))
         )
-        pos_cta = int(H * 0.87)
-
-    textos_overlay.append(
-        TextClip(
-            text="Link no Instagram\ne no Telegram!",
-            font_size=55,
-            color="white",
-            stroke_color="black",
-            stroke_width=2,
-            text_align="center",
-        )
-        .with_duration(duracao)
-        .with_position(("center", pos_cta))
-    )
 
     video = CompositeVideoClip([fundo, *clipes_imagens, *textos_overlay], size=(W, H))
     video = video.with_audio(audio)
