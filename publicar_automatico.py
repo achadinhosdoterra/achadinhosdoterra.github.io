@@ -6,7 +6,8 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-from gerar_imagem_story import gerar_imagem_story, normalizar_imagens_feed
+from gerar_imagem_story import _slug, gerar_imagem_story, normalizar_imagens_feed
+from gerar_video import gerar_video
 from postar_instagram import load_env, publicar_feed, publicar_story
 from postar_telegram import avisar_fila_vazia, publicar_telegram
 from postar_buffer import publicar_tiktok
@@ -16,6 +17,7 @@ PUBLICADOS_PATH = Path(__file__).parent / "publicados.csv"
 TEMP_PATH = Path(__file__).parent / "temp_video" / "post_atual.json"
 IMAGENS_DIR = Path(__file__).parent / "imagens_geradas"
 STORIES_DIR = Path(__file__).parent / "stories_geradas"
+VIDEOS_DIR = Path(__file__).parent / "videos_gerados"
 MARCADOR_FILA_VAZIA = Path(__file__).parent / ".aviso_fila_vazia"
 
 REPO = "achadinhosdoterra/achadinhosdoterra.github.io"
@@ -92,8 +94,27 @@ def preparar(tipo):
     if tipo == "feed":
         caminhos = normalizar_imagens_feed(produto, IMAGENS_DIR)
         relativos = [c.relative_to(base).as_posix() for c in caminhos]
+
+        video_gerado_rel = None
+        if not produto.get("video_url"):
+            try:
+                imagens_video = produto.get("imagens")
+                if isinstance(imagens_video, str):
+                    imagens_video = [u for u in imagens_video.split("|") if u]
+                video_produto = dict(produto)
+                video_produto["imagens"] = imagens_video
+                caminho_video = gerar_video(video_produto, VIDEOS_DIR, nome_base=_slug(produto["titulo"]))
+                video_gerado_rel = caminho_video.relative_to(base).as_posix()
+                print("Video gerado para TikTok (fallback, sem video real do anuncio):", video_gerado_rel)
+            except Exception as e:
+                print(f"Aviso: falha ao gerar video fallback para TikTok, produto seguira sem video no TikTok: {e}")
+
         with TEMP_PATH.open("w", encoding="utf-8") as f:
-            json.dump({"tipo": tipo, "produto": produto, "imagens_geradas": relativos}, f, ensure_ascii=False)
+            json.dump(
+                {"tipo": tipo, "produto": produto, "imagens_geradas": relativos, "video_gerado": video_gerado_rel},
+                f,
+                ensure_ascii=False,
+            )
         print(f"Imagens preparadas para feed ({len(relativos)}):", relativos)
     else:
         caminho = gerar_imagem_story(produto, STORIES_DIR)
@@ -115,6 +136,10 @@ def publicar_preparado(publicar):
     produto["imagens"] = [
         f"https://raw.githubusercontent.com/{REPO}/main/{rel}" for rel in dados["imagens_geradas"]
     ]
+
+    video_gerado_rel = dados.get("video_gerado")
+    if video_gerado_rel:
+        produto["video_url"] = f"https://raw.githubusercontent.com/{REPO}/main/{video_gerado_rel}"
 
     env = load_env()
     if dados["tipo"] == "feed":

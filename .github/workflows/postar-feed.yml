@@ -31,21 +31,22 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
-      - name: Gerar imagem hospedada do produto
+      - name: Gerar imagem (e video, se necessario) hospedados do produto
         run: python publicar_automatico.py --tipo=feed --preparar
 
-      - name: Commit e push da imagem gerada (ou aviso de fila vazia)
+      - name: Commit e push da imagem/video gerado (ou aviso de fila vazia)
         run: |
           git config user.name "Achadinhos Bot"
           git config user.email "achadinhos@achadinhosdoterra.local"
           git add imagens_geradas
+          [ -d videos_gerados ] && git add videos_gerados
           [ -f .aviso_fila_vazia ] && git add .aviso_fila_vazia
           git diff --cached --quiet && echo "Sem mudancas" && exit 0
-          git commit -m "Gera imagem de feed - $(date +'%d/%m/%Y %H:%M')"
+          git commit -m "Gera imagem/video de feed - $(date +'%d/%m/%Y %H:%M')"
           git push
 
       - name: Aguardar propagacao do arquivo publico
-        run: sleep 20
+        run: sleep 30
 
       - name: Publicar proximo produto da fila no feed
         run: python publicar_automatico.py --tipo=feed --publicar

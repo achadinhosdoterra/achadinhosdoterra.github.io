@@ -42,7 +42,7 @@ def publicar_tiktok(env, produto, link_afiliado, publicar=False):
     print(f"Produto: {produto['titulo']}")
 
     if not video_url:
-        print("Sem video real do anuncio disponivel - TikTok exige video, pulando este produto.")
+        print("Sem video disponivel (real ou gerado) - TikTok exige video, pulando este produto.")
         print("=======================")
         return
 
@@ -52,7 +52,7 @@ def publicar_tiktok(env, produto, link_afiliado, publicar=False):
         f"🔗 Link no nosso Instagram ou Telegram: @achadinhosdoterra\n\n"
         f"#achadinhos #achadinhosdoterra #promocao"
     )
-    print(f"Video (do anuncio): {video_url}")
+    print(f"Video: {video_url}")
     print("Texto:")
     print(texto)
     print("=======================")
