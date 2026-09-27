@@ -43,7 +43,7 @@ def _escapar(texto):
 
 
 def publicar_tiktok(env, produto, link_afiliado, publicar=False):
-    imagens = _lista_imagens(produto)[:10]
+    video_url = produto.get("video_url")
     texto = (
         f"{produto['titulo']} 👀\n\n"
         f"💰 {_preco_str(produto['preco_atual'])}\n\n"
@@ -53,7 +53,11 @@ def publicar_tiktok(env, produto, link_afiliado, publicar=False):
 
     print("=== PREVIA DO POST (TIKTOK via Buffer) ===")
     print(f"Produto: {produto['titulo']}")
-    print(f"Imagens ({len(imagens)}): {imagens}")
+    if video_url:
+        print(f"Video (do anuncio): {video_url}")
+    else:
+        imagens = _lista_imagens(produto)[:10]
+        print(f"Sem video disponivel, usando fotos ({len(imagens)}): {imagens}")
     print("Texto:")
     print(texto)
     print("=======================")
@@ -62,7 +66,11 @@ def publicar_tiktok(env, produto, link_afiliado, publicar=False):
         print("\n(modo teste: nada foi publicado. Rode com --publicar para postar de verdade)")
         return
 
-    assets = ", ".join(f'{{image: {{url: "{_escapar(url)}"}}}}' for url in imagens)
+    if video_url:
+        assets = f'{{video: {{url: "{_escapar(video_url)}"}}}}'
+    else:
+        imagens = _lista_imagens(produto)[:10]
+        assets = ", ".join(f'{{image: {{url: "{_escapar(url)}"}}}}' for url in imagens)
     query = f"""
     mutation {{
       createPost(input: {{
