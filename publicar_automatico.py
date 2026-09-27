@@ -120,7 +120,10 @@ def publicar_preparado(publicar):
     if dados["tipo"] == "feed":
         publicar_feed(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
         publicar_telegram(env, produto_original, link_afiliado=produto_original["link_afiliado"], publicar=publicar)
-        publicar_tiktok(env, produto, link_afiliado=produto["link_afiliado"], publicar=publicar)
+        try:
+            publicar_tiktok(env, produto, link_afiliado=produto["link_afiliado"], publicar=publicar)
+        except Exception as e:
+            print(f"Aviso: falha ao publicar no TikTok (Instagram/Telegram ja foram, seguindo em frente): {e}")
     else:
         publicar_story(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
 
