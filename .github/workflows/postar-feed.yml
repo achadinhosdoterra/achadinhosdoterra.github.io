@@ -5,6 +5,10 @@ on:
     - cron: "0 12,16,20,23 * * *" # 9h, 13h, 17h, 20h America/Sao_Paulo (UTC-3)
   workflow_dispatch: {}
 
+concurrency:
+  group: postar-feed
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -43,7 +47,14 @@ jobs:
           [ -f .aviso_fila_vazia ] && git add .aviso_fila_vazia
           git diff --cached --quiet && echo "Sem mudancas" && exit 0
           git commit -m "Gera imagem/video de feed - $(date +'%d/%m/%Y %H:%M')"
-          git push
+          for tentativa in 1 2 3 4 5; do
+            git push && exit 0
+            echo "push falhou (tentativa $tentativa), sincronizando com origin/main..."
+            git pull --rebase --autostash origin main
+            sleep 5
+          done
+          echo "push falhou apos varias tentativas"
+          exit 1
 
       - name: Aguardar propagacao do arquivo publico
         run: sleep 30
@@ -59,5 +70,13 @@ jobs:
           git config user.name "Achadinhos Bot"
           git config user.email "achadinhos@achadinhosdoterra.local"
           git add publicados.csv docs/index.html
-          git diff --cached --quiet && echo "Sem mudancas" || git commit -m "Post automatico no feed - $(date +'%d/%m/%Y %H:%M')"
-          git push
+          git diff --cached --quiet && echo "Sem mudancas" && exit 0
+          git commit -m "Post automatico no feed - $(date +'%d/%m/%Y %H:%M')"
+          for tentativa in 1 2 3 4 5; do
+            git push && exit 0
+            echo "push falhou (tentativa $tentativa), sincronizando com origin/main..."
+            git pull --rebase --autostash origin main
+            sleep 5
+          done
+          echo "push falhou apos varias tentativas - risco de post duplicado no proximo ciclo!"
+          exit 1

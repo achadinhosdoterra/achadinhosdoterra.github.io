@@ -5,6 +5,10 @@ on:
     - cron: "0 12,14,16,18,20,22,0,2 * * *" # 9h,11h,13h,15h,17h,19h,21h,23h America/Sao_Paulo (UTC-3)
   workflow_dispatch: {}
 
+concurrency:
+  group: postar-stories
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -36,7 +40,14 @@ jobs:
           git add stories_geradas
           git diff --cached --quiet && echo "Sem imagem nova" && exit 0
           git commit -m "Gera imagem de story - $(date +'%d/%m/%Y %H:%M')"
-          git push
+          for tentativa in 1 2 3 4 5; do
+            git push && exit 0
+            echo "push falhou (tentativa $tentativa), sincronizando com origin/main..."
+            git pull --rebase --autostash origin main
+            sleep 5
+          done
+          echo "push falhou apos varias tentativas"
+          exit 1
 
       - name: Aguardar propagacao do arquivo publico
         run: sleep 20
@@ -52,5 +63,13 @@ jobs:
           git config user.name "Achadinhos Bot"
           git config user.email "achadinhos@achadinhosdoterra.local"
           git add publicados.csv docs/index.html
-          git diff --cached --quiet && echo "Sem mudancas" || git commit -m "Post automatico no story - $(date +'%d/%m/%Y %H:%M')"
-          git push
+          git diff --cached --quiet && echo "Sem mudancas" && exit 0
+          git commit -m "Post automatico no story - $(date +'%d/%m/%Y %H:%M')"
+          for tentativa in 1 2 3 4 5; do
+            git push && exit 0
+            echo "push falhou (tentativa $tentativa), sincronizando com origin/main..."
+            git pull --rebase --autostash origin main
+            sleep 5
+          done
+          echo "push falhou apos varias tentativas - risco de story duplicado no proximo ciclo!"
+          exit 1
