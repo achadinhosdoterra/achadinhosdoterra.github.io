@@ -137,9 +137,14 @@ def gerar_video(produto, output_dir, nome_base):
     video = CompositeVideoClip([fundo, *clipes_imagens, *textos_overlay], size=(W, H))
     video = video.with_audio(audio)
 
-    print("Renderizando video...")
-    video.write_videofile(str(saida_path), fps=24, codec="libx264", audio_codec="aac")
+    try:
+        print("Renderizando video...")
+        video.write_videofile(str(saida_path), fps=24, codec="libx264", audio_codec="aac")
+    except Exception:
+        saida_path.unlink(missing_ok=True)
+        raise
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
 
-    shutil.rmtree(temp_dir, ignore_errors=True)
     print(f"Video gerado: {saida_path}")
     return saida_path

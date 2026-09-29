@@ -1,28 +1,26 @@
-name: Postar no feed automaticamente
+name: Postar no TikTok automaticamente
 
 on:
   schedule:
-    - cron: "0 12,16,20,23 * * *" # 9h, 13h, 17h, 20h America/Sao_Paulo (UTC-3)
+    - cron: "30 10,14,18,22 * * *" # 7h30, 11h30, 15h30, 19h30 America/Sao_Paulo (UTC-3)
   workflow_dispatch: {}
 
 concurrency:
-  group: postar-feed
+  group: postar-tiktok
   cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
-  postar-feed:
+  postar-tiktok:
     runs-on: ubuntu-latest
     env:
-      IG_APP_ID: ${{ secrets.IG_APP_ID }}
-      IG_USER_ID: ${{ secrets.IG_USER_ID }}
-      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-      IG_APP_SECRET: ${{ secrets.IG_APP_SECRET }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
       TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+      BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+      BUFFER_TIKTOK_CHANNEL_ID: ${{ secrets.BUFFER_TIKTOK_CHANNEL_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -34,17 +32,16 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Gerar imagem (e video, se necessario) hospedados do produto
-        run: python publicar_automatico.py --tipo=feed --preparar
+        run: python publicar_automatico.py --tipo=tiktok --preparar
 
-      - name: Commit e push da imagem/video gerado (ou aviso de fila vazia)
+      - name: Commit e push da imagem/video gerado
         run: |
           git config user.name "Achadinhos Bot"
           git config user.email "achadinhos@achadinhosdoterra.local"
           git add imagens_geradas
           [ -d videos_gerados ] && git add videos_gerados
-          [ -f .aviso_fila_vazia ] && git add .aviso_fila_vazia
           git diff --cached --quiet && echo "Sem mudancas" && exit 0
-          git commit -m "Gera imagem/video de feed - $(date +'%d/%m/%Y %H:%M')"
+          git commit -m "Gera imagem/video de tiktok - $(date +'%d/%m/%Y %H:%M')"
           for tentativa in 1 2 3 4 5; do
             git push && exit 0
             echo "push falhou (tentativa $tentativa), sincronizando com origin/main..."
@@ -57,8 +54,8 @@ jobs:
       - name: Aguardar propagacao do arquivo publico
         run: sleep 30
 
-      - name: Publicar proximo produto da fila no feed
-        run: python publicar_automatico.py --tipo=feed --publicar
+      - name: Publicar proximo produto no TikTok
+        run: python publicar_automatico.py --tipo=tiktok --publicar
 
       - name: Regenerar site
         run: python gerar_site.py
@@ -69,7 +66,7 @@ jobs:
           git config user.email "achadinhos@achadinhosdoterra.local"
           git add publicados.csv docs/index.html
           git diff --cached --quiet && echo "Sem mudancas" && exit 0
-          git commit -m "Post automatico no feed - $(date +'%d/%m/%Y %H:%M')"
+          git commit -m "Post automatico no tiktok - $(date +'%d/%m/%Y %H:%M')"
           for tentativa in 1 2 3 4 5; do
             git push && exit 0
             echo "push falhou (tentativa $tentativa), sincronizando com origin/main..."

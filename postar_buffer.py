@@ -44,7 +44,7 @@ def publicar_tiktok(env, produto, link_afiliado, publicar=False):
     if not video_url:
         print("Sem video disponivel (real ou gerado) - TikTok exige video, pulando este produto.")
         print("=======================")
-        return
+        return None
 
     texto = (
         f"{produto['titulo']} 👀\n\n"
@@ -59,7 +59,7 @@ def publicar_tiktok(env, produto, link_afiliado, publicar=False):
 
     if not publicar:
         print("\n(modo teste: nada foi publicado. Rode com --publicar para postar de verdade)")
-        return
+        return None
 
     assets = f'{{video: {{url: "{_escapar(video_url)}"}}}}'
     query = f"""
@@ -89,3 +89,4 @@ def publicar_tiktok(env, produto, link_afiliado, publicar=False):
     if payload["__typename"] != "PostActionSuccess":
         raise RuntimeError(f"Falha ao criar post no TikTok via Buffer: {payload}")
     print("Publicado (na fila) no TikTok! ID:", payload["post"]["id"], "status:", payload["post"]["status"])
+    return payload["post"]["id"]

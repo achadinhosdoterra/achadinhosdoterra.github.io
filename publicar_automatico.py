@@ -8,7 +8,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from gerar_imagem_story import _slug, gerar_imagem_story, normalizar_imagens_feed
 from gerar_video import gerar_video
-from postar_instagram import load_env, publicar_feed, publicar_story
+from postar_instagram import load_env, publicar_feed, publicar_story, registrar_publicacao
 from postar_telegram import avisar_fila_vazia, publicar_telegram
 from postar_buffer import publicar_tiktok
 
@@ -48,6 +48,16 @@ def escolher_para_feed():
     return None
 
 
+def escolher_para_tiktok():
+    fila = carregar_fila()
+    publicados = carregar_publicados()
+    ja_postados_tiktok = {p["titulo"] for p in publicados if p.get("tipo") == "tiktok"}
+    for produto in fila:
+        if produto["titulo"] not in ja_postados_tiktok:
+            return produto
+    return None
+
+
 def escolher_para_story():
     fila = carregar_fila()
     publicados = carregar_publicados()
@@ -73,8 +83,16 @@ def escolher_para_story():
     return None
 
 
+def _escolher_produto(tipo):
+    if tipo == "feed":
+        return escolher_para_feed()
+    if tipo == "tiktok":
+        return escolher_para_tiktok()
+    return escolher_para_story()
+
+
 def preparar(tipo):
-    produto = escolher_para_feed() if tipo == "feed" else escolher_para_story()
+    produto = _escolher_produto(tipo)
     if not produto:
         print(f"Fila vazia: nenhum produto disponivel para {tipo}. Abastecer fila.csv.")
         if tipo == "feed":
@@ -94,7 +112,14 @@ def preparar(tipo):
     if tipo == "feed":
         caminhos = normalizar_imagens_feed(produto, IMAGENS_DIR)
         relativos = [c.relative_to(base).as_posix() for c in caminhos]
-
+        with TEMP_PATH.open("w", encoding="utf-8") as f:
+            json.dump(
+                {"tipo": tipo, "produto": produto, "imagens_geradas": relativos, "video_gerado": None},
+                f,
+                ensure_ascii=False,
+            )
+        print(f"Imagens preparadas para feed ({len(relativos)}):", relativos)
+    elif tipo == "tiktok":
         video_gerado_rel = None
         if not produto.get("video_url"):
             try:
@@ -105,17 +130,17 @@ def preparar(tipo):
                 video_produto["imagens"] = imagens_video
                 caminho_video = gerar_video(video_produto, VIDEOS_DIR, nome_base=_slug(produto["titulo"]))
                 video_gerado_rel = caminho_video.relative_to(base).as_posix()
-                print("Video gerado para TikTok (fallback, sem video real do anuncio):", video_gerado_rel)
+                print("Video gerado (fallback, sem video real do anuncio):", video_gerado_rel)
             except Exception as e:
-                print(f"Aviso: falha ao gerar video fallback para TikTok, produto seguira sem video no TikTok: {e}")
+                print(f"Aviso: falha ao gerar video fallback, produto seguira sem video no tiktok: {e}")
 
         with TEMP_PATH.open("w", encoding="utf-8") as f:
             json.dump(
-                {"tipo": tipo, "produto": produto, "imagens_geradas": relativos, "video_gerado": video_gerado_rel},
+                {"tipo": tipo, "produto": produto, "imagens_geradas": [], "video_gerado": video_gerado_rel},
                 f,
                 ensure_ascii=False,
             )
-        print(f"Imagens preparadas para feed ({len(relativos)}):", relativos)
+        print("Video preparado para tiktok:", video_gerado_rel or produto.get("video_url"))
     else:
         caminho = gerar_imagem_story(produto, STORIES_DIR)
         relativo = caminho.relative_to(base).as_posix()
@@ -145,10 +170,10 @@ def publicar_preparado(publicar):
     if dados["tipo"] == "feed":
         publicar_feed(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
         publicar_telegram(env, produto_original, link_afiliado=produto_original["link_afiliado"], publicar=publicar)
-        try:
-            publicar_tiktok(env, produto, link_afiliado=produto["link_afiliado"], publicar=publicar)
-        except Exception as e:
-            print(f"Aviso: falha ao publicar no TikTok (Instagram/Telegram ja foram, seguindo em frente): {e}")
+    elif dados["tipo"] == "tiktok":
+        post_id = publicar_tiktok(env, produto, link_afiliado=produto["link_afiliado"], publicar=publicar)
+        if publicar and post_id:
+            registrar_publicacao("tiktok", produto_original, produto_original["link_afiliado"], post_id)
     else:
         publicar_story(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
 
@@ -163,8 +188,8 @@ if __name__ == "__main__":
         if arg.startswith("--tipo="):
             tipo = arg.split("=", 1)[1]
 
-    if tipo not in ("feed", "story"):
-        raise SystemExit("--tipo= deve ser feed ou story")
+    if tipo not in ("feed", "story", "tiktok"):
+        raise SystemExit("--tipo= deve ser feed, story ou tiktok")
 
     if preparar_flag:
         preparar(tipo)

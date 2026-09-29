@@ -11,6 +11,7 @@ TIPO_LABEL = {
     "feed": "Feed",
     "reels": "Reels",
     "story": "Story",
+    "tiktok": "TikTok",
 }
 
 CARD_TEMPLATE = """
