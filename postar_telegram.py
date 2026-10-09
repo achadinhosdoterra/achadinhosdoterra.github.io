@@ -64,11 +64,19 @@ def publicar_telegram(env, produto, link_afiliado, publicar=False):
 
     chat_id = env["TELEGRAM_CHANNEL"]
 
+    tentativas = []
     if len(imagens) > 1:
         media = [{"type": "photo", "media": url} for url in imagens[:10]]
         media[0]["caption"] = caption
-        resultado = telegram_post(env, "sendMediaGroup", chat_id=chat_id, media=json.dumps(media))
-    else:
-        resultado = telegram_post(env, "sendPhoto", chat_id=chat_id, photo=imagens[0], caption=caption)
+        tentativas.append(lambda: telegram_post(env, "sendMediaGroup", chat_id=chat_id, media=json.dumps(media)))
+    tentativas.append(lambda: telegram_post(env, "sendPhoto", chat_id=chat_id, photo=imagens[0], caption=caption))
+    tentativas.append(lambda: telegram_post(env, "sendMessage", chat_id=chat_id, text=caption))
 
-    print("Publicado no Telegram!", resultado.get("ok"))
+    for tentativa in tentativas:
+        try:
+            resultado = tentativa()
+            print("Publicado no Telegram!", resultado.get("ok"))
+            return
+        except urllib.error.HTTPError:
+            print("Falhou, tentando formato mais simples...")
+    raise RuntimeError("Nao consegui publicar no Telegram de nenhum jeito")

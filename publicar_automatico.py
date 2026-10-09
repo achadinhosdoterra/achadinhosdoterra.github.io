@@ -169,7 +169,10 @@ def publicar_preparado(publicar):
     env = load_env()
     if dados["tipo"] == "feed":
         publicar_feed(env, produto, publicar=publicar, link_afiliado=produto["link_afiliado"])
-        publicar_telegram(env, produto_original, link_afiliado=produto_original["link_afiliado"], publicar=publicar)
+        try:
+            publicar_telegram(env, produto_original, link_afiliado=produto_original["link_afiliado"], publicar=publicar)
+        except Exception as e:
+            print(f"Aviso: falha ao publicar no Telegram (Instagram ja foi, seguindo em frente): {e}")
     elif dados["tipo"] == "tiktok":
         post_id = publicar_tiktok(env, produto, link_afiliado=produto["link_afiliado"], publicar=publicar)
         if publicar and post_id:
